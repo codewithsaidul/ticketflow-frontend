@@ -1,0 +1,5 @@
+export { CATEGORIES } from "./category-data"
+export { FEATURED_EVENTS } from "./events-data"
+export { WHY_CHOOSE } from "./why-choose-data"
+export { STEPS } from "./how-it-works-data"
+export { footerSections, socialLinks } from "./footerData"
