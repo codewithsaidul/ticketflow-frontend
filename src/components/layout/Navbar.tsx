@@ -28,10 +28,10 @@ export function Navbar() {
   // };
 
   const navLinks = [
-    { label: "Browse Events", href: "#events" },
-    { label: "For Organizers", href: "#organizers" },
-    { label: "Pricing", href: "#pricing" },
-    { label: "About", href: "#about" },
+    { label: "Home", href: "/" },
+    { label: "All Events", href: "/events" },
+    { label: "About Us", href: "/about" },
+    { label: "Contact", href: "/contact" },
   ];
 
   return (
