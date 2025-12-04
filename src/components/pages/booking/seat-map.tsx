@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
@@ -60,9 +61,8 @@ export default function SeatMap({
         <div
           className="grid gap-2 sm:gap-3 mx-auto min-w-fit"
           style={{
-            // ডাইনামিক কলাম সেটআপ
             gridTemplateColumns: `repeat(${meta?.totalCols || 10}, minmax(0, 1fr))`,
-            width: meta?.totalCols > 8 ? "max-content" : "100%", // মোবাইলে যেন চ্যাপ্টা না হয়
+            width: meta?.totalCols > 8 ? "max-content" : "100%",
           }}
         >
           {seats.map((seat) => {
@@ -72,16 +72,16 @@ export default function SeatMap({
             const isDisabled = isBooked || isLocked;
 
             return (
-              <button
+              <Button
                 key={seat._id}
                 disabled={isDisabled}
                 onClick={() => onSeatClick(seat._id)}
                 className={cn(
-                  "h-10 w-10 sm:h-12 sm:w-12 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center border select-none",
+                  "h-10 w-10 sm:h-12 sm:w-12 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center border select-none cursor-pointer",
                   
                   // 1. Available (Default)
                   !isDisabled && !isSelected &&
-                    "bg-background border-border text-foreground hover:border-primary hover:text-primary hover:shadow-md",
+                    "bg-background border-border text-foreground hover:border-primary hover:text-white hover:shadow-md",
 
                   // 2. Selected (Active)
                   isSelected &&
@@ -98,7 +98,7 @@ export default function SeatMap({
                 title={`Seat ${seat.label} - ৳${seat.price || meta.basePrice}`}
               >
                 {isBooked ? "X" : seat.label}
-              </button>
+              </Button>
             );
           })}
         </div>
