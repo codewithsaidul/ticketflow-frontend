@@ -11,7 +11,6 @@ export default async function EventDetailsPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  console.log("🚀 ~ EventDetailsPage ~ params:", (await params).slug);
 
   const slug = (await params).slug;
 

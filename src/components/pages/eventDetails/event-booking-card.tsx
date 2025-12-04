@@ -33,7 +33,7 @@ export default function EventBookingCard({ event }: { event: IEvent }) {
 
       <CardFooter>
         {isAvailable ? (
-          <Link href={`/dashboard/user/book-event/${event._id}`} className="w-full">
+          <Link href={`/booking/${event.slug}`} className="w-full">
             <Button size="lg" className="w-full text-lg font-bold gap-2">
               <Ticket className="w-5 h-5" />
               Book Tickets Now
