@@ -13,24 +13,6 @@ import { clearUser } from "@/redux/slice/auth.slice";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  // const [isDark, setIsDark] = useState(false);
-
-  // useEffect(() => {
-  //   const isDarkMode = document.documentElement.classList.contains("dark");
-  //   setIsDark(isDarkMode);
-  // }, []);
-
-  // const toggleTheme = () => {
-  //   const html = document.documentElement;
-  //   if (isDark) {
-  //     html.classList.remove("dark");
-  //     localStorage.setItem("theme", "light");
-  //   } else {
-  //     html.classList.add("dark");
-  //     localStorage.setItem("theme", "dark");
-  //   }
-  //   setIsDark(!isDark);
-  // };
 
   const [logout] = useLogoutMutation();
   const dispatch = useAppDispatch();
@@ -76,22 +58,7 @@ export function Navbar() {
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-3">
-            {/* Theme Toggle */}
-            {/* <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              className="rounded-full"
-              aria-label="Toggle theme"
-            >
-              {isDark ? (
-                <Sun className="w-4 h-4" />
-              ) : (
-                <Moon className="w-4 h-4" />
-              )}
-            </Button> */}
-
+          <div className="flex items-center gap-2">
             {/* Auth Buttons - Desktop */}
             {user ? (
               <ProfileAvatar
