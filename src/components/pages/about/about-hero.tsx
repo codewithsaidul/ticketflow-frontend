@@ -6,8 +6,19 @@ import Link from "next/link";
 export function AboutHero() {
   return (
     <section className="relative w-full h-full overflow-hidden py-20 lg:py-32 min-h-[80vh]">
-      <div className="absolute inset-0 -z-10 h-full w-full gradient-bg">
-        <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px] animate-pulse" />
+      {/* Gradient background */}
+      <div className="absolute inset-0 gradient-bg" />
+
+      {/* Grid pattern overlay */}
+      <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]">
+        <svg className="w-full h-full" width="100%" height="100%">
+          <defs>
+            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">

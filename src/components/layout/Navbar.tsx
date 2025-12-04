@@ -29,8 +29,8 @@ export function Navbar() {
 
   const navLinks = [
     { label: "Home", href: "/" },
-    { label: "All Events", href: "/events" },
     { label: "About Us", href: "/about" },
+    { label: "All Events", href: "/events" },
     { label: "Contact", href: "/contact" },
   ];
 
@@ -72,12 +72,9 @@ export function Navbar() {
             </Button> */}
 
             {/* Auth Buttons - Desktop */}
-            <div className="hidden sm:flex items-center gap-2">
-              <Button variant="ghost" size="sm">
-                Log In
-              </Button>
-              <Button size="sm" className="bg-primary hover:bg-primary/90">
-                Sign Up
+            <div>
+              <Button size="sm" className="bg-primary hover:bg-primary/90 cursor-pointer">
+                <Link href="/auth/login">Log In</Link>
               </Button>
             </div>
 
@@ -112,21 +109,6 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <div className="px-3 py-2 space-y-2 border-t border-border mt-2 pt-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start"
-                >
-                  Log In
-                </Button>
-                <Button
-                  size="sm"
-                  className="w-full bg-primary hover:bg-primary/90"
-                >
-                  Sign Up
-                </Button>
-              </div>
             </div>
           </div>
         )}
