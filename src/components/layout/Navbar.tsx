@@ -5,6 +5,11 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import Logo from "../shared/Logo";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { authApi, useLogoutMutation } from "@/redux/api/authApi/authApi";
+import toast from "react-hot-toast";
+import ProfileAvatar from "./profile-avatar";
+import { clearUser } from "@/redux/slice/auth.slice";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,12 +32,28 @@ export function Navbar() {
   //   setIsDark(!isDark);
   // };
 
+  const [logout] = useLogoutMutation();
+  const dispatch = useAppDispatch();
+
+  const handleLogout = async () => {
+    try {
+      await logout(undefined);
+      dispatch(authApi.util.resetApiState());
+      dispatch(clearUser());
+      toast.success("Logout Successfully");
+    } catch {
+      toast.error("Logout failed!");
+    }
+  };
+
   const navLinks = [
     { label: "Home", href: "/" },
     { label: "About Us", href: "/about" },
     { label: "All Events", href: "/events" },
     { label: "Contact", href: "/contact" },
   ];
+
+  const { user } = useAppSelector((state) => state.auth);
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-background/80 glass">
@@ -72,11 +93,17 @@ export function Navbar() {
             </Button> */}
 
             {/* Auth Buttons - Desktop */}
-            <div>
-              <Button size="sm" className="bg-primary hover:bg-primary/90 cursor-pointer">
+            {user ? (
+              <ProfileAvatar
+                name={user?.name}
+                userRole={user?.role}
+                logOutFn={handleLogout}
+              />
+            ) : (
+              <Button asChild variant="default" size="sm" className="text-sm">
                 <Link href="/auth/login">Log In</Link>
               </Button>
-            </div>
+            )}
 
             {/* Mobile Menu Toggle */}
             <Button
