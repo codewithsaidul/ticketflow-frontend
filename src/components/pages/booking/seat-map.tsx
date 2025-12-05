@@ -2,16 +2,30 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useSyncSeatsMutation } from "@/redux/api/seatApi/seatApi";
+import { useAppSelector } from "@/redux/hooks";
 import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { io } from "socket.io-client";
+
+// সকেট কানেকশন
+const socket = io(process.env.NEXT_PUBLIC_API_URL as string, {
+  withCredentials: true,
+  transports: ["websocket"], // ফাস্ট ট্রান্সপোর্টের জন্য
+});
 
 interface ISeat {
   _id: string;
   label: string;
-  status: "AVAILABLE" | "BOOKED" | "LOCKED";
+  status: "available" | "booked" | "locked";
   price: number;
+  lockedBy?: string; // অপশনাল হতে পারে
 }
 
 interface SeatMapProps {
+  eventId: string;
+  refetch: any;
   isLoading: boolean;
   seats: ISeat[];
   meta: { totalCols: number; basePrice: number };
@@ -20,12 +34,86 @@ interface SeatMapProps {
 }
 
 export default function SeatMap({
+  eventId,
+  refetch,
   isLoading,
   seats,
   meta,
   selectedSeats,
   onSeatClick,
 }: SeatMapProps) {
+  const [syncSeats] = useSyncSeatsMutation();
+  const { user } = useAppSelector((state) => state.auth);
+  const myUserId = user?._id; // বা user?.userId (আপনার স্লাইস অনুযায়ী)
+
+  // 🔥 লোকাল স্টেট: অন্যদের রিয়েল-টাইম লক ট্র্যাক করার জন্য
+  const [optimisticLockedSeats, setOptimisticLockedSeats] = useState<string[]>(
+    []
+  );
+
+  // ১. সকেট লিসেনার (Real-time Updates)
+  useEffect(() => {
+    socket.emit("join_ticket_room", eventId);
+
+    // A. ডাটাবেস আপডেট হলে (পাকাপাকি লক)
+    socket.on("seats-updated", () => {
+      console.log("⚡ DB Updated, Refetching...");
+      refetch();
+      setOptimisticLockedSeats([]);
+    });
+
+    // B. অপটিমিস্টিক লক (কেউ ক্লিক করলেই ইনস্ট্যান্ট আপডেট)
+    socket.on(
+      "seat-optimistic-lock",
+      (payload: { seatIds: string[]; lockerId: string }) => {
+        // যদি লকার আমি না হই, তাহলে আমার স্ক্রিনে লক দেখাও
+        if (payload.lockerId !== myUserId) {
+          console.log("⚡ Optimistic Lock received:", payload.seatIds);
+          setOptimisticLockedSeats((prev) => [...prev, ...payload.seatIds]);
+        }
+      }
+    );
+
+    return () => {
+      socket.off("seats-updated");
+      socket.off("seat-optimistic-lock");
+    };
+  }, [eventId, refetch, myUserId]);
+
+  // ২. ডিবাউন্স লজিক (ডাটাবেস সিঙ্ক)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      syncSeats({ eventId, seatIds: selectedSeats })
+        .unwrap()
+        .catch((err) => {
+          if (err.status === 409) {
+            toast.error("Seat already taken!");
+            refetch();
+          }
+        });
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [selectedSeats, eventId, syncSeats, refetch]);
+
+  // ৩. ক্লিক হ্যান্ডলার (লোকাল + সকেট এমিট)
+  const handleSeatClickLocal = (seatId: string) => {
+    // প্যারেন্ট স্টেট আপডেট (ভিজ্যুয়াল সিলেকশন)
+    onSeatClick(seatId);
+
+    // 🔥 সাথে সাথে সকেট ইভেন্ট পাঠানো (যাতে অন্যরা দেখে)
+    // চেক করছি এটা কি সিলেকশন (নাকি ডিসিলেকশন)
+    const isSelecting = !selectedSeats.includes(seatId);
+
+    if (isSelecting) {
+      socket.emit("client-locking-seat", {
+        eventId,
+        seatIds: [seatId],
+        userId: myUserId,
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -37,65 +125,87 @@ export default function SeatMap({
   if (!seats || seats.length === 0) {
     return (
       <div className="text-center py-20 text-muted-foreground border rounded-lg bg-muted/20">
-        No seats configuration found for this event.
+        No seats configuration found.
       </div>
     );
   }
 
   return (
     <div className="w-full bg-card border rounded-xl shadow-sm p-4 sm:p-8">
-      <h3 className="text-xl font-heading font-bold mb-8 text-center">
-        Select Seats
-      </h3>
-
-      {/* 🎭 Screen / Stage Visual */}
+      {/* Screen Visual */}
       <div className="w-full max-w-lg mx-auto mb-10">
+        <h3 className="text-xl font-heading font-bold mb-8 text-center">
+          Select Seats
+        </h3>
         <div className="h-2 w-full bg-primary/20 rounded-full shadow-[0_4px_20px_-2px_rgba(var(--primary),0.3)]" />
         <p className="text-center text-xs text-muted-foreground mt-2 uppercase tracking-widest font-medium">
           Stage / Screen
         </p>
       </div>
 
-      {/* 💺 Seat Grid Wrapper (Overflow handling for mobile) */}
+      {/* Grid */}
       <div className="w-full overflow-x-auto pb-4">
         <div
           className="grid gap-2 sm:gap-3 mx-auto min-w-fit"
           style={{
-            gridTemplateColumns: `repeat(${meta?.totalCols || 10}, minmax(0, 1fr))`,
+            gridTemplateColumns: `repeat(${
+              meta?.totalCols || 10
+            }, minmax(0, 1fr))`,
             width: meta?.totalCols > 8 ? "max-content" : "100%",
           }}
         >
           {seats.map((seat) => {
+            // ১. আমার সিলেক্ট করা কিনা
             const isSelected = selectedSeats.includes(seat._id);
-            const isBooked = seat.status === "BOOKED";
-            const isLocked = seat.status === "LOCKED";
-            const isDisabled = isBooked || isLocked;
+            // ২. বুকড কিনা (ডাটাবেস থেকে)
+            const isBooked = seat.status === "booked";
+
+            // ৩. ডাটাবেস লক লজিক
+            const isDbLockedByMe =
+              seat.status === "locked" && seat.lockedBy === myUserId;
+            const isDbLockedByOthers =
+              seat.status === "locked" && seat.lockedBy !== myUserId;
+
+            // ৪. অপটিমিস্টিক লক লজিক (সকেট থেকে আসা)
+            // যদি অপটিমিস্টিক লিস্টে থাকে এবং আমি সিলেক্ট না করে থাকি
+            const isOptimisticLocked =
+              optimisticLockedSeats.includes(seat._id) && !isSelected;
+
+            // ৫. ফাইনাল লক স্ট্যাটাস (অন্যদের দ্বারা)
+            const isLockedByOthers = isDbLockedByOthers || isOptimisticLocked;
+
+            // ৬. বাটন ডিজেবল হবে কখন?
+            const isDisabled = isBooked || isLockedByOthers;
+
+            // ৭. আমার নিজের কাছে সিটটা কেমন দেখাবে (সিলেক্টেড বা আমার লক করা হলে নীল)
+            const isActiveByUser = isSelected || isDbLockedByMe;
 
             return (
               <Button
                 key={seat._id}
                 disabled={isDisabled}
-                onClick={() => onSeatClick(seat._id)}
+                onClick={() => handleSeatClickLocal(seat._id)}
                 className={cn(
                   "h-10 w-10 sm:h-12 sm:w-12 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center border select-none cursor-pointer",
-                  
-                  // 1. Available (Default)
-                  !isDisabled && !isSelected &&
+
+                  // A. Available (সাদা)
+                  !isDisabled &&
+                    !isActiveByUser &&
                     "bg-background border-border text-foreground hover:border-primary hover:text-white hover:shadow-md",
 
-                  // 2. Selected (Active)
-                  isSelected &&
+                  // B. Selected / Locked by Me (নীল)
+                  isActiveByUser &&
                     "bg-primary text-primary-foreground border-primary shadow-lg scale-105 ring-2 ring-primary/20",
 
-                  // 3. Booked (Disabled)
+                  // C. Booked (ধূসর)
                   isBooked &&
                     "bg-muted text-muted-foreground cursor-not-allowed border-transparent opacity-50",
 
-                  // 4. Locked (Temporary)
-                  isLocked &&
+                  // D. Locked by Others (হলুদ - ওয়ার্নিং)
+                  isLockedByOthers &&
                     "bg-yellow-100 text-yellow-600 border-yellow-300 cursor-not-allowed animate-pulse"
                 )}
-                title={`Seat ${seat.label} - ৳${seat.price || meta.basePrice}`}
+                title={`Seat ${seat.label}`}
               >
                 {isBooked ? "X" : seat.label}
               </Button>
@@ -104,18 +214,20 @@ export default function SeatMap({
         </div>
       </div>
 
-      {/* 🏷️ Legend (Information) */}
+      {/* Legend */}
       <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mt-8 border-t pt-6">
-        <LegendItem color="bg-background border border-border" label="Available" />
+        <LegendItem
+          color="bg-background border border-border"
+          label="Available"
+        />
         <LegendItem color="bg-primary" label="Selected" />
         <LegendItem color="bg-muted opacity-50" label="Booked" />
-        <LegendItem color="bg-yellow-400" label="Locked" />
+        <LegendItem color="bg-yellow-400" label="Locked (Others)" />
       </div>
     </div>
   );
 }
 
-// Helper Component for Legend
 function LegendItem({ color, label }: { color: string; label: string }) {
   return (
     <div className="flex items-center gap-2">

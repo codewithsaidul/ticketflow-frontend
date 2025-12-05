@@ -12,8 +12,11 @@ import OrderSummary from "./order-summary";
 import { ISeat } from "@/types";
 
 export default function Booking({ slug }: { slug: string }) {
-  const { data: eventData, isLoading: isEventLoading } =
-    useGetSingleEventQuery(slug);
+  const {
+    data: eventData,
+    isLoading: isEventLoading,
+    refetch,
+  } = useGetSingleEventQuery(slug);
   const { data: seatData, isLoading: isSeatLoading } = useGetEventSeatsQuery(
     eventData?._id,
     {
@@ -79,10 +82,11 @@ export default function Booking({ slug }: { slug: string }) {
     })
     .map((seat: ISeat) => {
       return {
-      id: seat._id,
-      label: seat.label,
-      price: seat.price || meta?.basePrice,
-    };
+        id: seat._id,
+        label: seat.label,
+        price: seat.price || meta?.basePrice,
+        lockedBy: seat?.lockedBy || ""
+      };
     });
 
   return (
@@ -102,6 +106,8 @@ export default function Booking({ slug }: { slug: string }) {
           {/* 🔥 LEFT SIDE: SEAT MAP (2 Columns) */}
           <div className="lg:col-span-2 space-y-6">
             <SeatMap
+              eventId={eventData?._id}
+              refetch={refetch}
               isLoading={isSeatLoading}
               seats={seats}
               meta={meta}
