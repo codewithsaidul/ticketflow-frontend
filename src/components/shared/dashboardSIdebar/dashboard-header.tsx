@@ -22,7 +22,8 @@ import { useLogOut } from "@/hooks/useLogOut";
 import { useAppSelector } from "@/redux/hooks";
 import { getInitialsName } from "@/utils";
 import { Avatar } from "@radix-ui/react-avatar";
-import { Bell, LogOut, Settings, User } from "lucide-react";
+import { Bell, LogOut, User } from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardHeader() {
   const { user, isLoggedIn } = useAppSelector((state) => state.auth);
@@ -40,7 +41,7 @@ export default function DashboardHeader() {
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
-              <BreadcrumbPage>Dashboard</BreadcrumbPage>
+              <BreadcrumbPage><span className="capitalize">{user?.role}</span> Dashboard</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -77,12 +78,10 @@ export default function DashboardHeader() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuItem className="cursor-pointer">
-                <User className="mr-2 h-4 w-4" />
-                Profile Settings
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
-                <Settings className="mr-2 h-4 w-4" />
-                Account Settings
+                <Link href={`/dashboard/${user?.role}/profile`} className="flex items-center">
+                  <User className="mr-2 h-4 w-4" />
+                  Profile Settings
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

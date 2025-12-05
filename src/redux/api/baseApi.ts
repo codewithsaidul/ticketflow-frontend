@@ -4,6 +4,6 @@ import { baseQueryWithRefresh } from '../baseQueryWithRefresh';
 export const baseApi = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithRefresh,
-  tagTypes: ['User', 'Event', 'Seat', 'Booking'],
+  tagTypes: ['User', 'Event', 'Seat', 'Booking', "Stats"],
   endpoints: () => ({}),
 });

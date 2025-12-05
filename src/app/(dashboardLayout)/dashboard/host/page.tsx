@@ -1,8 +1,10 @@
+"use client"
+import DashboardOverviewPage from "@/components/pages/dashboard/Overview";
 
 export default function HostOverviewPage () {
   return (
     <div>
-       <h1>This is HostOverviewPage Component</h1>
+       <DashboardOverviewPage />
    </div>
   );
 };

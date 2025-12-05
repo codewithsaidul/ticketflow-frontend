@@ -5,7 +5,8 @@ export interface ISeat {
   number: number
   label: string
   price: number
-  status: string
+  status: string;
+  lockedBy?: string;
   createdAt: string
   updatedAt: string
 }

@@ -20,7 +20,7 @@ export function EventCard({
   return (
     <div className="group relative overflow-hidden rounded-lg glass hover:border-primary/50 transition-all duration-300 h-full flex flex-col">
       {/* Image Container */}
-      <div className="relative h-48 sm:h-56 overflow-hidden">
+      <div className="relative h-48 sm:h-64 overflow-hidden">
         <Link href={`/events/${slug}`} className="cursor-pointer">
           <Image
             src={
