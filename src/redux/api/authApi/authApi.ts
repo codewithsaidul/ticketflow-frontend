@@ -26,12 +26,11 @@ export const authApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["User"],
     }),
-    me: build.query({
+    getMe: build.query({
       query: () => {
         return {
           url: `${AUTH_URL}/me`,
           method: "GET",
-          credentials: "include",
         };
       },
       providesTags: ["User"],
@@ -55,7 +54,7 @@ export const authApi = baseApi.injectEndpoints({
 export const {
   useLoginMutation,
   useRegisterMutation,
-  useMeQuery,
+  useGetMeQuery,
   useVerifyEmailQuery,
   useLogoutMutation,
 } = authApi;

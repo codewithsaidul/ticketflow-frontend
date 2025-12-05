@@ -54,9 +54,9 @@ export const sidebarMenus: Record<UserRole, MenuGroup[]> = {
       ],
     },
     {
-      title: "System",
+      title: "My Settings",
       items: [
-        { title: "Settings", url: "/dashboard/administrator/settings", icon: Settings },
+        { title: "Profile", url: "/dashboard/administrator/profile", icon: Settings },
       ],
     },
   ],
@@ -81,12 +81,12 @@ export const sidebarMenus: Record<UserRole, MenuGroup[]> = {
         { title: "All Bookings", url: "/dashboard/admin/bookings", icon: ListOrdered },
       ],
     },
-    {
-      title: "System",
+     {
+      title: "My Settings",
       items: [
-        { title: "Settings", url: "/dashboard/admin/settings", icon: Settings },
+        { title: "Profile", url: "/dashboard/admin/profile", icon: Settings },
       ],
-    },
+    }
   ],
 
   host: [
@@ -109,12 +109,12 @@ export const sidebarMenus: Record<UserRole, MenuGroup[]> = {
         { title: "My Bookings", url: "/dashboard/host/bookings", icon: Ticket },
       ],
     },
-    {
-      title: "System",
+     {
+      title: "My Settings",
       items: [
-        { title: "Settings", url: "/dashboard/host/settings", icon: Settings },
+        { title: "Profile", url: "/dashboard/host/profile", icon: Settings },
       ],
-    },
+    }
   ],
 
   user: []
