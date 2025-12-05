@@ -34,11 +34,18 @@ import {
   RegisterFormValues,
   registerSchema,
 } from "@/validation/auth.validation";
+import toast from "react-hot-toast";
+import { IApiErrorResponse } from "@/types";
+import { useRegisterMutation } from "@/redux/api/authApi/authApi";
+import { useRouter } from "next/navigation";
+import PasswordInput from "@/components/ui/password-input";
 
 export default function RegisterForm() {
   const [interests, setInterests] = useState<string[]>([]);
   const [interestInput, setInterestInput] = useState("");
   const [image, setImage] = useState<File | null>(null);
+  const [register, { isLoading} ] = useRegisterMutation();
+  const router = useRouter();
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -70,15 +77,29 @@ export default function RegisterForm() {
     form.setValue("interests", newInterests);
   };
 
-  function onSubmit(data: RegisterFormValues) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { confirmPassword, ...apiData } = data;
-
+  const onSubmit = async (data: RegisterFormValues) => {
+    const toastId = toast.loading("Creating...")
     const formData = new FormData();
-    formData.append("data", JSON.stringify(apiData));
+    formData.append("data", JSON.stringify(data));
     formData.append("file", image as File);
 
-    console.log("Submitting:", {...apiData, image});
+
+    try {
+      await new Promise((res) => setTimeout(res, 1200));
+      const res = await register(formData).unwrap();
+
+      if (res.success) {
+        toast.success(res.message, { id: toastId });
+        router.push("/auth/login")
+      }
+    } catch (error) {
+      const err = error as IApiErrorResponse;
+      console.log("🚀 ~ handleLogin ~ err:", err);
+      toast.error(err?.data?.message || "Login failed", {
+        id: toastId,
+      });
+    }
+
   }
 
   return (
@@ -176,8 +197,7 @@ export default function RegisterForm() {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input
-                            type="password"
+                          <PasswordInput
                             placeholder="••••••••"
                             {...field}
                           />
@@ -194,8 +214,7 @@ export default function RegisterForm() {
                       <FormItem>
                         <FormLabel>Confirm Password</FormLabel>
                         <FormControl>
-                          <Input
-                            type="password"
+                          <PasswordInput
                             placeholder="••••••••"
                             {...field}
                           />
@@ -301,8 +320,9 @@ export default function RegisterForm() {
                 <Button
                   type="submit"
                   className="w-full h-11 text-base cursor-pointer font-bold shadow-lg shadow-primary/20 mt-4"
+                  disabled={isLoading}
                 >
-                  Create Account
+                  { isLoading ? "Creating..." : "Create Account"}
                 </Button>
 
                 <div className="relative my-4">

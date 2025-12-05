@@ -15,6 +15,17 @@ export const authApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ["User"],
     }),
+    register: build.mutation({
+      query: (payload) => {
+        return {
+          url: `${AUTH_URL}/register`,
+          method: "POST",
+          body: payload,
+          credentials: "include",
+        };
+      },
+      invalidatesTags: ["User"],
+    }),
     me: build.query({
       query: () => {
         return {
@@ -24,6 +35,12 @@ export const authApi = baseApi.injectEndpoints({
         };
       },
       providesTags: ["User"],
+    }),
+    verifyEmail: build.query({
+      query: (token) => ({
+        url: `${AUTH_URL}/verify-email?token=${token}`,
+        method: "GET",
+      }),
     }),
     logout: build.mutation({
       query: () => ({
@@ -37,6 +54,8 @@ export const authApi = baseApi.injectEndpoints({
 
 export const {
   useLoginMutation,
+  useRegisterMutation,
   useMeQuery,
+  useVerifyEmailQuery,
   useLogoutMutation,
 } = authApi;
