@@ -21,7 +21,7 @@ export const commonProtectedRoutes: RouteConfig = {
 
 // 3. Super Admin Routes
 export const superAdminProtectedRoutes: RouteConfig = {
-  patterns: [/^\/dashboard\/super_admin/],
+  patterns: [/^\/dashboard\/administrator/],
   exact: [],
 };
 
