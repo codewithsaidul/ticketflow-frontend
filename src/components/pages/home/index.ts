@@ -1,0 +1,6 @@
+export { default as Hero } from "./hero-section"
+export { default as FeaturedSection } from "./featured-events"
+export { default as CategorySection } from "./category-grid"
+export { default as WhyChooseUs } from "./why-choose"
+export { default as HowItWorks } from "./how-it-works"
+export { default as CTASection } from "./cta-section"

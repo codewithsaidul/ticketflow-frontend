@@ -4,7 +4,6 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-
   --font-inter: var(--font-inter);
   --font-jakarta: var(--font-jakarta);
 
@@ -40,7 +39,6 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
 
-
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -51,7 +49,7 @@
   --radius: 0.5rem;
 
   --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695); 
+  --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
 
@@ -75,7 +73,7 @@
 
   --border: oklch(0.9 0.02 263);
   --input: oklch(0.9 0.02 263);
-  --ring: oklch(0.52 0.23 263); 
+  --ring: oklch(0.52 0.23 263);
 
   --chart-1: oklch(0.52 0.23 263);
   --chart-2: oklch(0.6 0.18 200);
@@ -94,16 +92,14 @@
 }
 
 .dark {
-
   --background: oklch(0.12 0.03 264);
   --foreground: oklch(0.985 0.01 264);
 
-  --card: oklch(0.15 0.03 264); 
+  --card: oklch(0.15 0.03 264);
   --card-foreground: oklch(0.985 0.01 264);
 
   --popover: oklch(0.15 0.03 264);
   --popover-foreground: oklch(0.985 0.01 264);
-
 
   --primary: oklch(0.6 0.22 263);
   --primary-foreground: oklch(0.985 0 0);
@@ -130,7 +126,7 @@
   --chart-4: oklch(0.75 0.2 80);
   --chart-5: oklch(0.65 0.2 30);
 
-  --sidebar: oklch(0.1 0.03 264); 
+  --sidebar: oklch(0.1 0.03 264);
   --sidebar-foreground: oklch(0.985 0.01 264);
   --sidebar-primary: oklch(0.6 0.22 263);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -146,5 +142,58 @@
   }
   body {
     @apply bg-background text-foreground font-inter;
+  }
+}
+
+/* Glassmorphism effect - adapts to light and dark modes */
+.glass {
+  @apply backdrop-blur-md border;
+}
+
+:root .glass {
+  @apply bg-white/70 border-white/20;
+}
+
+.dark .glass {
+  @apply bg-white/5 border-white/10;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-foreground) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Updated gradient background for both light and dark modes */
+.gradient-bg {
+  background: linear-gradient(
+    135deg,
+    rgba(108, 99, 255, 0.05) 0%,
+    rgba(108, 99, 255, 0.02) 50%,
+    rgba(59, 130, 246, 0.02) 100%
+  );
+}
+
+.dark .gradient-bg {
+  background: linear-gradient(
+    135deg,
+    rgba(108, 99, 255, 0.1) 0%,
+    rgba(108, 99, 255, 0.05) 50%,
+    rgba(59, 130, 246, 0.05) 100%
+  );
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
