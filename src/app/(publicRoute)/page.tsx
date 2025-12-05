@@ -7,7 +7,7 @@ import {
 } from "@/components/pages/home";
 import WhyChooseUS from "@/components/pages/home/why-choose";
 
-export default function Home() {
+export default async function Home() {
   return (
     <>
       <Hero />

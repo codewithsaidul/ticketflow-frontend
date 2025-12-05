@@ -9,7 +9,7 @@ export function Footer() {
 
   return (
     <footer className="border-t border-border bg-linear-to-b from-background to-muted/30">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+      <div className="mx-auto container px-4 lg:px-0 py-12">
         {/* Newsletter Section */}
         <div className="flex justify-center mb-12 pb-12 border-b border-border">
           <div className="text-center">

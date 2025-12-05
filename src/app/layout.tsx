@@ -2,6 +2,7 @@ import ReduxProviders from "@/provider/ReduxProvider";
 import { IChildren } from "@/types";
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 // ১. বডি টেক্সটের জন্য Inter
@@ -82,8 +83,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<IChildren>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${jakarta.variable} dark antialiased`}>
-        <ReduxProviders>{children}</ReduxProviders>
+      <body
+        className={`${inter.variable} ${jakarta.variable} dark antialiased`}
+      >
+        <ReduxProviders>
+          {children} <Toaster />
+        </ReduxProviders>
       </body>
     </html>
   );
