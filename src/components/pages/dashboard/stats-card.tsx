@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowUpRight } from "lucide-react";
 
-export default function StatsCard ( { kpi } ) {
+export default function StatsCard ( { kpi }: { kpi: any} ) {
   return (
     <Card className="shadow-lg border-primary/10">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
