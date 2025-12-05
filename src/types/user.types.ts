@@ -13,3 +13,11 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
 }
+
+
+export enum UserRole {
+  SUPERADMIN = "superadmin",
+  ADMIN = "admin",
+  HOST = "host",
+  USER = "user"
+}

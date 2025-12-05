@@ -23,11 +23,13 @@ import { LoginFormValues, loginSchema } from "@/validation/auth.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export function LoginForm() {
   const [login, { isLoading }] = useLoginMutation();
+  const router = useRouter();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -47,20 +49,23 @@ export function LoginForm() {
 
       if (res.success) {
         dispatch(setUser(res.data.user));
-        // const role = res.data.user.role;
+        const role = res.data.user.role;
         toast.success(res.message, { id: toastId });
 
-        // switch (role) {
-        //   case "superAdmin":
-        //     router.push("/administrator");
-        //     break;
-        //   case "branch":
-        //     router.push("/branch");
-        //     break;
-        //   default:
-        //     router.push("/");
-        //     break;
-        // }
+        switch (role) {
+          case "superadmin":
+            router.push("/dashboard/administrator");
+            break;
+          case "admin":
+            router.push("/dashboard/admin");
+            break;
+          case "host":
+            router.push("/dashboard/host");
+            break;
+          default:
+            router.push("/");
+            break;
+        }
       }
     } catch (error) {
       const err = error as IApiErrorResponse;

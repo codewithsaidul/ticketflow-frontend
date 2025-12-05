@@ -1,32 +1,18 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useLogOut } from "@/hooks/useLogOut";
+import { useAppSelector } from "@/redux/hooks";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import Logo from "../shared/Logo";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { authApi, useLogoutMutation } from "@/redux/api/authApi/authApi";
-import toast from "react-hot-toast";
 import ProfileAvatar from "./profile-avatar";
-import { clearUser } from "@/redux/slice/auth.slice";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const [logout] = useLogoutMutation();
-  const dispatch = useAppDispatch();
-
-  const handleLogout = async () => {
-    try {
-      await logout(undefined);
-      dispatch(authApi.util.resetApiState());
-      dispatch(clearUser());
-      toast.success("Logout Successfully");
-    } catch {
-      toast.error("Logout failed!");
-    }
-  };
+  const { logout } = useLogOut();
 
   const navLinks = [
     { label: "Home", href: "/" },
@@ -64,7 +50,7 @@ export function Navbar() {
               <ProfileAvatar
                 name={user?.name}
                 userRole={user?.role}
-                logOutFn={handleLogout}
+                logOutFn={logout}
               />
             ) : (
               <Button asChild variant="default" size="sm" className="text-sm">
