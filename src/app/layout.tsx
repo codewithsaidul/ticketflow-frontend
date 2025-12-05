@@ -82,7 +82,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<IChildren>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${jakarta.variable} antialiased`}>
+      <body className={`${inter.variable} ${jakarta.variable} dark antialiased`}>
         <ReduxProviders>{children}</ReduxProviders>
       </body>
     </html>
