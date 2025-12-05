@@ -8,7 +8,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { UserRole } from "@/constants/user.role.constants";
+import { role } from "@/constants/user.role.constants";
+
 import { LogOut, LayoutDashboard, User, Ticket } from "lucide-react";
 import Link from "next/link";
 
@@ -22,8 +23,8 @@ interface IAvatarProps {
 const ProfileAvatar = ({ name, image, userRole, logOutFn }: IAvatarProps) => {
   // ড্যাশবোর্ড লিংক নির্ণয় করা (Role অনুযায়ী)
   const getDashboardUrl = () => {
-    if (userRole === UserRole.HOST) return "/dashboard/host";
-    if (userRole === UserRole.ADMIN || userRole === UserRole.SUPERADMIN)
+    if (userRole === role.HOST) return "/dashboard/host";
+    if (userRole === role.ADMIN || userRole === role.SUPERADMIN)
       return "/dashboard/admin";
     return "/";
   };
@@ -67,9 +68,9 @@ const ProfileAvatar = ({ name, image, userRole, logOutFn }: IAvatarProps) => {
         )}
 
         {/* --- CONDITION 2: ADMIN / SUPER_ADMIN / HOST --- */}
-        {(userRole === UserRole.ADMIN ||
-          userRole === UserRole.SUPERADMIN ||
-          userRole === UserRole.HOST) && (
+        {(userRole === role.ADMIN ||
+          userRole === role.SUPERADMIN ||
+          userRole === role.HOST) && (
           <>
             <DropdownMenuItem asChild>
               <Link

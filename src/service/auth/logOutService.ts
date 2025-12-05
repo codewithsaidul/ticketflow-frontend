@@ -7,12 +7,10 @@ import { IApiErrorResponse } from "@/types";
 
 type RouterType = ReturnType<typeof useRouter>;
 
-type LogoutMutationResult = Promise<{ success: boolean; message: string }> & {
-  unwrap: () => Promise<{ success: boolean; message: string }>;
-};
 
 export const logoutService = async (
-  logoutMutation: (arg: undefined) => LogoutMutationResult,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  logoutMutation: any,
   dispatch: AppDispatch,
   router: RouterType,
 ) => {
