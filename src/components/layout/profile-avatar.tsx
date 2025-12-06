@@ -9,6 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { role } from "@/constants/user.role.constants";
+import { UserRole } from "@/types";
+import { getDashboardUrl } from "@/utils/getDashboardUrl";
 
 import { LogOut, LayoutDashboard, User, Ticket } from "lucide-react";
 import Link from "next/link";
@@ -16,18 +18,13 @@ import Link from "next/link";
 interface IAvatarProps {
   name: string;
   image?: string;
-  userRole: string; // "user" | "admin" | "super_admin" | "host"
+  userRole: UserRole;
   logOutFn: () => void;
 }
 
 const ProfileAvatar = ({ name, image, userRole, logOutFn }: IAvatarProps) => {
-  // ড্যাশবোর্ড লিংক নির্ণয় করা (Role অনুযায়ী)
-  const getDashboardUrl = () => {
-    if (userRole === role.HOST) return "/dashboard/host";
-    if (userRole === role.ADMIN || userRole === role.SUPERADMIN)
-      return "/dashboard/admin";
-    return "/";
-  };
+
+  const dashboardPath = getDashboardUrl(userRole)
 
   return (
     <DropdownMenu>
@@ -74,7 +71,7 @@ const ProfileAvatar = ({ name, image, userRole, logOutFn }: IAvatarProps) => {
           <>
             <DropdownMenuItem asChild>
               <Link
-                href={getDashboardUrl()}
+                href={dashboardPath}
                 className="cursor-pointer flex items-center gap-2"
               >
                 <LayoutDashboard className="w-4 h-4" /> Dashboard

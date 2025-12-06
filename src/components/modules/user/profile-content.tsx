@@ -20,7 +20,9 @@ import {
 
 export default function ProfileContent() {
   const { data, isLoading } = useGetMeQuery(undefined);
+  console.log("🚀 ~ ProfileContent ~ data:", data)
   const user = data?.data as IUser;
+  console.log("🚀 ~ ProfileContent ~ user:", user)
 
   if (isLoading) {
     return (
