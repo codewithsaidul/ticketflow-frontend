@@ -7,7 +7,7 @@ import SearchFilter from "@/components/shared/dashboard/search-fillter";
 import SelectFilter from "@/components/shared/dashboard/select-fillter";
 import { TableSkeleton } from "@/components/shared/dashboard/table-skeleton";
 import SecondaryPagination from "@/components/shared/secondary-pagination";
-import { useGetMyEventsQuery } from "@/redux/api/eventApi/eventApi"; // Adjust path
+import { useGetAllEventsQuery } from "@/redux/api/eventApi/eventApi";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
@@ -33,7 +33,7 @@ export default function EventsPage() {
   const category = searchParams.get("category") || "";
   const status = searchParams.get("status") || "";
 
-  const { data, isLoading, isError } = useGetMyEventsQuery({
+  const { data, isLoading, isError } = useGetAllEventsQuery({
     page: page.toString(),
     limit: 10,
     searchTerm,

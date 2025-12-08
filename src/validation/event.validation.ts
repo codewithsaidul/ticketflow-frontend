@@ -8,6 +8,7 @@ export const eventCreationSchema = z.object({
   date: z.string().optional(),
   location: z.string().min(5, "Location is required."),
   category: z.string().min(1, "Category is required."),
+  status: z.string().min(1, "Category is required."),
 
   // 🔥 FIX 1: z.preprocess এর বদলে z.coerce.number()
   rows: z.number().int().min(1, "Minimum 1 row required."),

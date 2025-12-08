@@ -28,7 +28,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateEventMutation } from "@/redux/api/eventApi/eventApi";
 import { IApiErrorResponse } from "@/types";
-import { EventCreationFormValues, eventCreationSchema } from "@/validation/event.validation";
+import {
+  EventCreationFormValues,
+  eventCreationSchema,
+} from "@/validation/event.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDownIcon, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -44,9 +47,12 @@ export default function CreateEventPage() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const [timeStr, setTimeStr] = useState<string>("10:30:00");
 
   const form = useForm<EventCreationFormValues>({
-    resolver: zodResolver(eventCreationSchema) as Resolver<EventCreationFormValues>,
+    resolver: zodResolver(
+      eventCreationSchema
+    ) as Resolver<EventCreationFormValues>,
     defaultValues: {
       title: "",
       description: "",
@@ -76,9 +82,13 @@ export default function CreateEventPage() {
 
     formData.append("file", imageFile);
 
+    const combinedDate = new Date(date as Date);
+    const [hours, minutes] = timeStr.split(":");
+    combinedDate.setHours(Number(hours), Number(minutes));
+
     const eventPayload = {
       ...data,
-      date: date,
+      date: combinedDate,
       mode: "ASSIGNED",
       seatLayout: {
         rows: data.rows,
@@ -201,15 +211,13 @@ export default function CreateEventPage() {
                     </Popover>
                   </div>
                   <div className="flex flex-col flex-1 gap-3">
-                    <FormLabel htmlFor="time-picker" className="px-1">
-                      Time
-                    </FormLabel>
+                    <FormLabel className="px-1">Time</FormLabel>
                     <Input
                       type="time"
-                      id="time-picker"
                       step="1"
-                      defaultValue="10:30:00"
-                      className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                      value={timeStr}
+                      onChange={(e) => setTimeStr(e.target.value)}
+                      className="bg-background appearance-none"
                     />
                   </div>
                 </div>
@@ -284,10 +292,12 @@ export default function CreateEventPage() {
                           type="number"
                           placeholder="e.g., 500"
                           {...field}
-                          value={field.value || ""} 
+                          value={field.value || ""}
                           onChange={(e) =>
                             field.onChange(
-                              e.target.value ? Number(e.target.value) : undefined
+                              e.target.value
+                                ? Number(e.target.value)
+                                : undefined
                             )
                           }
                         />
@@ -298,7 +308,6 @@ export default function CreateEventPage() {
                 />
               </div>
               {/* === END NEW ROW === */}
-              
 
               {/* === ROW 4: SEATING CONFIG (ROWS, COLS, PRICE) === */}
               <h2 className="text-xl font-bold pt-4 border-t">
@@ -393,7 +402,7 @@ export default function CreateEventPage() {
 
               <Button
                 type="submit"
-                className="w-full mt-6 h-11 text-base font-bold shadow-lg shadow-primary/20"
+                className="w-full mt-6 h-11 text-base font-bold shadow-lg shadow-primary/20 cursor-pointer"
                 disabled={isLoading}
               >
                 {isLoading ? (

@@ -11,6 +11,25 @@ export const bookingApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Event", "Seat", "Booking"],
     }),
+    getAllBookings: builder.query({
+      query: (args) => {
+        const params = new URLSearchParams();
+
+        if (args) {
+          Object.entries(args).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+              params.append(key, String(value));
+            }
+          });
+        }
+
+        return {
+          url: `${BOOKINGS_BASE_URL}`,
+          params: args,
+        };
+      },
+      providesTags: ["Booking"],
+    }),
     getMyBookings: builder.query({
       query: (args) => {
         const params = new URLSearchParams();
@@ -47,13 +66,14 @@ export const bookingApi = baseApi.injectEndpoints({
           params: args,
         };
       },
-      providesTags: ["Booking"]
+      providesTags: ["Booking"],
     }),
   }),
 });
 
 export const {
   useCreateBookingMutation,
+  useGetAllBookingsQuery,
   useGetMyBookingsQuery,
   useGetHostBookingsQuery,
 } = bookingApi;

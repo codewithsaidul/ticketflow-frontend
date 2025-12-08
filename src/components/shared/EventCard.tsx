@@ -6,6 +6,7 @@ import { Calendar, MapPin } from "lucide-react";
 import Image from "next/image";
 import { IEvent } from "@/types/events.types";
 import Link from "next/link";
+import { formatDate } from "@/utils/formatter";
 
 export function EventCard({
   title,
@@ -49,7 +50,7 @@ export function EventCard({
         <div className="space-y-2 my-3 flex-1 text-sm">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="w-4 h-4" />
-            <span>{date}</span>
+            <span>{formatDate(date)}</span>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
             <MapPin className="w-4 h-4" />

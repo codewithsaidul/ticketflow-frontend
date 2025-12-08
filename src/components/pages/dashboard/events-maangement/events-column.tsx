@@ -79,7 +79,7 @@ export const eventColumns: Column<IEvent>[] = [
     header: "Base Price",
     accessor: (event) => (
       <span className="text-sm font-semibold text-green-600">
-        ${event.seatLayout?.basePrice || 0}
+        ৳{event.seatLayout?.basePrice || 0}
       </span>
     ),
   },
@@ -90,8 +90,10 @@ export const eventColumns: Column<IEvent>[] = [
         className={cn(
           "capitalize",
           event.status === "active" && "bg-green-600 hover:bg-green-700",
-          event.status === "draft" && "bg-gray-500 hover:bg-gray-600",
-          event.status === "completed" && "bg-blue-600 hover:bg-blue-700",
+          event.status === "pending" && "bg-amber-600 hover:bg-amber-700",
+          event.status === "postponed" && "bg-blue-600 hover:bg-blue-700",
+          event.status === "cancelled" && "bg-red-600 hover:bg-red-700",
+          event.status === "finished" && "bg-slate-600 hover:bg-slate-700",
           event.isDeleted && "bg-destructive hover:bg-destructive/90"
         )}
       >

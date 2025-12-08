@@ -14,7 +14,7 @@ const EventsManagementHeader = () => {
       action={{
         label: "Create Event",
         icon: Plus,
-        onClick: () => router.push("/host/events/create"),
+        onClick: () => router.push("/dashboard/host/create-event"),
       }}
     />
   );

@@ -12,17 +12,12 @@ const BookingsTable = ({ bookings }: { bookings: IBooking[] }) => {
     setViewingBooking(booking);
   };
 
-  const handleDelete = (booking: IBooking) => {
-    console.log("Delete booking", booking._id);
-  };
-
   return (
     <>
       <ReusableTable
         data={bookings}
         columns={bookingColumns}
         onView={handleView}
-        onDelete={handleDelete}
         getRowKey={(booking) => booking._id}
         emptyMessage="No bookings found"
       />

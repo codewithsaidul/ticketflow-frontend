@@ -13,14 +13,20 @@ export const bookingColumns: Column<IBooking>[] = [
     header: "Event Info",
     accessor: (booking) => (
       <div className="flex items-center gap-3">
-        {booking.event.image && (
-          <Image
-            src={booking.event.image} 
-            alt={booking.event.title}
-            fill
-            className="h-10 w-10 rounded-md object-cover"
-          />
-        )}
+        <div className="relative h-12 w-16 rounded-md overflow-hidden bg-muted">
+          {booking.event.image ? (
+            <Image
+              src={booking.event.image}
+              alt={booking.event.title}
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <div className="h-full w-full flex items-center justify-center bg-gray-200 text-xs text-gray-500">
+              No Img
+            </div>
+          )}
+        </div>
         <div className="flex flex-col">
           <span className="font-medium text-sm">{booking.event.title}</span>
           <div className="flex items-center text-xs text-muted-foreground gap-1">
@@ -37,6 +43,16 @@ export const bookingColumns: Column<IBooking>[] = [
       <div className="flex flex-col">
         <span className="text-base text-muted-foreground truncate max-w-[100px]">
           {booking.user.name}
+        </span>
+      </div>
+    ),
+  },
+  {
+    header: "Transaction Number",
+    accessor: (booking) => (
+      <div className="flex flex-col">
+        <span className="text-base text-muted-foreground">
+          {booking.transactionId}
         </span>
       </div>
     ),
