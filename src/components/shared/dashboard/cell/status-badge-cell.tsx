@@ -3,19 +3,34 @@
 import { Badge } from "@/components/ui/badge";
 
 interface StatusBadgeCellProps {
-  isDeleted?: boolean;
+  isDeleted?: boolean; 
+  status: string;
+  isActive: boolean;
+  
   activeText?: string;
   deletedText?: string;
 }
 
 export function StatusBadgeCell({
-  isDeleted,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  status, 
+  isActive,
+  isDeleted = false,
   activeText = "Active",
-  deletedText = "Deleted",
+  deletedText = "Inactive"
 }: StatusBadgeCellProps) {
+  
+  const badgeVariant = isDeleted || !isActive ? "destructive" : "default";
+  
+  const displayText = isDeleted
+    ? deletedText
+    : isActive
+      ? activeText
+      : "Inactive";
+
   return (
-    <Badge variant={isDeleted ? "destructive" : "default"}>
-      {isDeleted ? deletedText : activeText}
+    <Badge variant={badgeVariant} className="uppercase">
+      {displayText}
     </Badge>
   );
 }

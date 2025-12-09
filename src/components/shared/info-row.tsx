@@ -1,4 +1,6 @@
-function InfoRow({ label, value }: { label: string; value?: string | number }) {
+import { ReactNode } from "react";
+
+function InfoRow({ label, value }: { label: string; value?: string | number | ReactNode}) {
   return (
     <div className="space-y-1">
       <p className="text-sm text-muted-foreground">{label}</p>
