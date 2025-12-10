@@ -4,7 +4,6 @@ import { RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
-
 interface RefreshButtonProps {
   size?: "sm" | "default" | "lg";
   variant?: "default" | "outline" | "ghost";

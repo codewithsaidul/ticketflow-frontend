@@ -1,13 +1,15 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useInitPaymentMutation } from "@/redux/api/paymentApi/paymentApi";
+import { IApiErrorResponse } from "@/types";
 import { IBooking } from "@/types/bookings.types";
 import { formatDate } from "@/utils/formatter";
-import { CalendarClock, MapPin, Ticket } from "lucide-react";
+import { CalendarClock, Loader2, MapPin, Ticket } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
-// Status Colors (Shadcn Compatible)
 const statusStyles = {
   paid: "bg-green-100 text-green-700 border-green-200",
   unpaid: "bg-yellow-100 text-yellow-700 border-yellow-200",
@@ -18,6 +20,30 @@ const statusStyles = {
 export default function BookingCard({ booking }: { booking: IBooking }) {
   const { event, payment, seats, totalAmount, status, _id } = booking;
   const paymentStatus = payment?.status || "unpaid";
+
+  const [initPayment, { isLoading: isRetrying }] = useInitPaymentMutation();
+
+  const handleRetryPayment = async () => {
+    const toastId = toast.loading("Initializing payment...");
+    try {
+      const res = await initPayment(_id).unwrap();
+      if (res.data && res.success) {
+        toast.dismiss(toastId);
+        window.location.href = res.data;
+      }
+    } catch (error) {
+      const err = error as IApiErrorResponse;
+      toast.dismiss(toastId);
+      if (err?.status === 410) {
+        toast.error("Booking Expired! Please select seats again.", {
+          duration: 5000,
+        });
+        window.location.reload();
+      } else {
+        toast.error(err.data?.message || "Payment retry failed.");
+      }
+    }
+  };
 
   // Fallback values
   const imageSrc =
@@ -94,7 +120,6 @@ export default function BookingCard({ booking }: { booking: IBooking }) {
             </span>
           </div>
           <div className="flex gap-1">
-            {/* প্রথম ৩টা সিট লেবেল দেখাবে */}
             {seats.slice(0, 3).map((seat) => (
               <Badge
                 key={seat._id}
@@ -137,11 +162,21 @@ export default function BookingCard({ booking }: { booking: IBooking }) {
                 <Link href={`/user/bookings/${_id}`}>Download Ticket</Link>
               </Button>
             )}
-            {paymentStatus === "failed" && (
-              <Button size="sm" variant="destructive">
-                Retry
-              </Button>
-            )}
+            {(paymentStatus === "failed" || paymentStatus === "unpaid") && (
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={handleRetryPayment}
+                  disabled={isRetrying}
+                  className="cursor-pointer"
+                >
+                  {isRetrying ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    "Retry Payment"
+                  )}
+                </Button>
+              )}
           </div>
         </div>
       </div>

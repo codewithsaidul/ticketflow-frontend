@@ -63,7 +63,6 @@ export default function Booking({ slug }: { slug: string }) {
       }
     } catch (error) {
       const err = error as IApiErrorResponse;
-      console.log("🚀 ~ handleCheckout ~ err:", err);
       toast.error(err.data?.message || "Booking failed. Please try again.");
     }
   };
@@ -123,7 +122,7 @@ export default function Booking({ slug }: { slug: string }) {
               eventImage={event?.image}
               eventDate={event?.date}
               eventLocation={event?.location}
-              selectedSeats={displaySeats} // এখানে চাইলে সিটের লেবেলগুলো ম্যাপ করে পাঠাতে পারেন
+              selectedSeats={displaySeats}
               unitPrice={basePrice}
               totalPrice={totalPrice}
               vat={vat}
