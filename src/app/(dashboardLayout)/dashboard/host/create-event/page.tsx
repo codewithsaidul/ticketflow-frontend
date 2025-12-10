@@ -67,7 +67,7 @@ export default function CreateEventPage() {
     },
   });
 
-  // 2. Submission Logic (Handling FormData for Image)
+
   const onSubmit = async (data: EventCreationFormValues) => {
     if (!date) {
       toast.error("Please Provide the event date & time");

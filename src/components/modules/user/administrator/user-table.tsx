@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { usersColumns } from "./user-column";
 import UserEditStatusDialog from "./user-edit-status-dialog";
 import UserViewDetailDialog from "./user-view-detail-dialog";
+import { IApiErrorResponse } from "@/types";
 
 interface UsersTableProps {
   users: IUser[];
@@ -39,17 +40,20 @@ const UsersTable = ({ users }: UsersTableProps) => {
 
   const confirmDelete = async () => {
     if (!deletingUser) return;
-
     setIsDeleting(true);
-    const result = await deleteUser(deletingUser._id!).unwrap();
-    setIsDeleting(false);
 
-    if (result.success) {
-      toast.success(result.message || "User deleted successfully");
-      setDeletingUser(null);
-      handleRefresh();
-    } else {
-      toast.error(result.message || "Failed to delete user");
+    try {
+      const res = await deleteUser(deletingUser._id!).unwrap();
+      if (res.success) {
+        toast.success(res.message || "Admin deleted successfully");
+        setDeletingUser(null);
+        handleRefresh();
+        setIsDeleting(false)
+      }
+    } catch (error) {
+      const err = error as IApiErrorResponse;
+      toast.error(err.data.message);
+      setIsDeleting(false)
     }
   };
 
@@ -88,7 +92,7 @@ const UsersTable = ({ users }: UsersTableProps) => {
         open={!!deletingUser}
         onOpenChange={(open) => !open && setDeletingUser(null)}
         onConfirm={confirmDelete}
-        title="Delete Event"
+        title="Delete Admin"
         description={`Are you sure you want to delete ${deletingUser?.name}? This action cannot be undone.`}
         isDeleting={isDeleting}
       />
