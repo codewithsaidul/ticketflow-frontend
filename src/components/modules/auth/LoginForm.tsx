@@ -23,13 +23,14 @@ import { LoginFormValues, loginSchema } from "@/validation/auth.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export function LoginForm() {
   const [login, { isLoading }] = useLoginMutation();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -74,6 +75,12 @@ export function LoginForm() {
         id: toastId,
       });
     }
+  };
+
+  // 👇 ADD THIS FUNCTION
+  const handleGoogleLogin = () => {
+    const redirectPath = searchParams.get("redirect") || "/";
+    window.location.href = `/api/v1/auth/google?redirect=${redirectPath}`;
   };
 
   return (
@@ -163,8 +170,9 @@ export function LoginForm() {
                     variant="outline"
                     type="button"
                     aria-label="Login with Google"
-                    className="w-full"
+                    className="w-full cursor-pointer"
                     disabled={isLoading}
+                    onClick={handleGoogleLogin}
                   >
                     <GoogleIcon />
                     Signin with Google

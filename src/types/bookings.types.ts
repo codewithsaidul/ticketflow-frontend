@@ -1,4 +1,5 @@
 import { ISeat } from "./seats.types";
+import { IUser } from "./user.types";
 
 export interface IEventSummary {
   _id: string;
@@ -17,7 +18,7 @@ export interface IPaymentSummary {
 export interface IBooking {
   _id: string;
   event: IEventSummary;
-  user: string;
+  user: IUser;
   payment: IPaymentSummary;
   seats: ISeat[];
   totalAmount: number;

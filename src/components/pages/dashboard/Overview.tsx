@@ -5,13 +5,12 @@ import { Separator } from "@/components/ui/separator";
 import { role } from "@/constants/user.role.constants";
 import { useGetDashboardStatsQuery } from "@/redux/api/statsApi/statsApi";
 import { useAppSelector } from "@/redux/hooks";
-import { UserRole } from "@/types"; // আপনার UserRole enum
+import { UserRole } from "@/types";
 import { IStats } from "@/types/stats.types";
 import { CalendarDays, DollarSign, Loader2, Ticket, Users } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
-// Dynamic Import of Chart (Ensures Recharts runs only on client)
 const DynamicSalesChart = dynamic(() => import("./sales-chart"), {
   loading: () => (
     <div className="h-[300px] flex items-center justify-center">
@@ -21,10 +20,9 @@ const DynamicSalesChart = dynamic(() => import("./sales-chart"), {
   ssr: false,
 });
 
-// Helper function to map data and format
 const mapStatsToKPIs = (stats: IStats, UserRole: UserRole) => {
   const isHost = UserRole === role.HOST;
-  const totalUsers = stats.totalUsers || 0; // SA/Admin specific
+  const totalUsers = stats.totalUsers || 0;
 
   return [
     {
@@ -89,7 +87,7 @@ export default function DashboardOverviewPage() {
       </h1>
 
       {/* 1. KPI Cards (Metrics) */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {kpis.map((kpi, index) => (
           <Card
             key={index}

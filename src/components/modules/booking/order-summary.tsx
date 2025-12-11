@@ -20,7 +20,7 @@ interface OrderSummaryProps {
   eventDate: string;
   eventLocation: string;
 
-  selectedSeats: SelectedSeat[]; // 🔥 এখন এটা অবজেক্টের অ্যারে
+  selectedSeats: SelectedSeat[]; 
 
   unitPrice: number;
   totalPrice: number;

@@ -47,12 +47,12 @@ export const sidebarMenus: Record<UserRole, MenuGroup[]> = {
         { title: "All Bookings", url: "/dashboard/administrator/bookings", icon: ListOrdered },
       ],
     },
-    {
-      title: "Finance",
-      items: [
-        { title: "Platform Sales", url: "/dashboard/administrator/sales", icon: CreditCard },
-      ],
-    },
+    // {
+    //   title: "Finance",
+    //   items: [
+    //     { title: "Platform Sales", url: "/dashboard/administrator/sales", icon: CreditCard },
+    //   ],
+    // },
     {
       title: "My Settings",
       items: [
