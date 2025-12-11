@@ -9,10 +9,9 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-// সকেট কানেকশন
 const socket = io(process.env.NEXT_PUBLIC_API_URL as string, {
   withCredentials: true,
-  transports: ["websocket"], // ফাস্ট ট্রান্সপোর্টের জন্য
+  transports: ["websocket"],
 });
 
 interface ISeat {
@@ -20,11 +19,12 @@ interface ISeat {
   label: string;
   status: "available" | "booked" | "locked";
   price: number;
-  lockedBy?: string; // অপশনাল হতে পারে
+  lockedBy?: string;
 }
 
 interface SeatMapProps {
   eventId: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetch: any;
   isLoading: boolean;
   seats: ISeat[];
@@ -44,31 +44,50 @@ export default function SeatMap({
 }: SeatMapProps) {
   const [syncSeats] = useSyncSeatsMutation();
   const { user } = useAppSelector((state) => state.auth);
-  const myUserId = user?._id; // বা user?.userId (আপনার স্লাইস অনুযায়ী)
+  const myUserId = user?._id;
 
-  // 🔥 লোকাল স্টেট: অন্যদের রিয়েল-টাইম লক ট্র্যাক করার জন্য
   const [optimisticLockedSeats, setOptimisticLockedSeats] = useState<string[]>(
     []
   );
-
-  // ১. সকেট লিসেনার (Real-time Updates)
   useEffect(() => {
+    if (!myUserId) return;
+
     socket.emit("join_ticket_room", eventId);
 
-    // A. ডাটাবেস আপডেট হলে (পাকাপাকি লক)
-    socket.on("seats-updated", () => {
-      console.log("⚡ DB Updated, Refetching...");
-      refetch();
-      setOptimisticLockedSeats([]);
-    });
+    socket.on(
+      "seats-updated",
+      (payload: { updaterId: string; releasedSeatIds?: string[] }) => {
+        if (
+          payload.releasedSeatIds &&
+          payload.updaterId === "SYSTEM_CRON_JOB"
+        ) {
+          console.log(
+            "🔓 System Unlock received for expired seats. Cleaning up optimistic state."
+          );
 
-    // B. অপটিমিস্টিক লক (কেউ ক্লিক করলেই ইনস্ট্যান্ট আপডেট)
+          setOptimisticLockedSeats((prevSeats) =>
+            prevSeats.filter(
+              (seatId) => !payload.releasedSeatIds!.includes(seatId)
+            )
+          );
+
+          refetch();
+        } else {
+          console.log(`⚡ DB Updated by ${payload.updaterId}. Refetching...`);
+          setOptimisticLockedSeats([]);
+          refetch();
+        }
+      }
+    );
+
     socket.on(
       "seat-optimistic-lock",
       (payload: { seatIds: string[]; lockerId: string }) => {
-        // যদি লকার আমি না হই, তাহলে আমার স্ক্রিনে লক দেখাও
         if (payload.lockerId !== myUserId) {
-          console.log("⚡ Optimistic Lock received:", payload.seatIds);
+          console.log(
+            "⚡ Optimistic Lock received from another user:",
+            payload.seatIds
+          );
           setOptimisticLockedSeats((prev) => [...prev, ...payload.seatIds]);
         }
       }
@@ -80,29 +99,32 @@ export default function SeatMap({
     };
   }, [eventId, refetch, myUserId]);
 
-  // ২. ডিবাউন্স লজিক (ডাটাবেস সিঙ্ক)
   useEffect(() => {
+    if (!myUserId) return;
+
     const timer = setTimeout(() => {
+      if (selectedSeats.length > 0) {
+        console.log(
+          `⏱️ Debouncing finished. Syncing ${selectedSeats.length} seats to DB.`
+        );
+      }
+
       syncSeats({ eventId, seatIds: selectedSeats })
         .unwrap()
         .catch((err) => {
           if (err.status === 409) {
-            toast.error("Seat already taken!");
+            toast.error("One or more seats were taken just now. Retrying...");
             refetch();
           }
         });
     }, 50);
 
     return () => clearTimeout(timer);
-  }, [selectedSeats, eventId, syncSeats, refetch]);
+  }, [selectedSeats, eventId, syncSeats, refetch, myUserId]);
 
-  // ৩. ক্লিক হ্যান্ডলার (লোকাল + সকেট এমিট)
   const handleSeatClickLocal = (seatId: string) => {
-    // প্যারেন্ট স্টেট আপডেট (ভিজ্যুয়াল সিলেকশন)
     onSeatClick(seatId);
 
-    // 🔥 সাথে সাথে সকেট ইভেন্ট পাঠানো (যাতে অন্যরা দেখে)
-    // চেক করছি এটা কি সিলেকশন (নাকি ডিসিলেকশন)
     const isSelecting = !selectedSeats.includes(seatId);
 
     if (isSelecting) {

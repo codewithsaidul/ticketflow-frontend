@@ -85,7 +85,7 @@ export const getRouteOwner = (
 export const getDefaultDashboardRoute = (user_role: string): string => {
   switch (user_role) {
     case role.SUPERADMIN:
-      return "/dashboard/super_admin";
+      return "/dashboard/administrator";
     case role.ADMIN:
       return "/dashboard/admin";
     case role.HOST:

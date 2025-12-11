@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 
 export interface IEvent {
   seatLayout: SeatLayout
@@ -16,10 +14,10 @@ export interface IEvent {
   maxParticipants: number
   status: string
   isDeleted: boolean
-  zones: any[]
+  zones: IZone[]
   createdAt: string
   updatedAt: string
-  image?: string
+  image: string
 }
 
 export interface SeatLayout {
@@ -33,4 +31,12 @@ export interface Organizer {
   _id: string
   name: string
   email: string
+}
+
+
+export interface IZone {
+  name: string; 
+  capacity: number;
+  price: number;
+  sold: number;
 }

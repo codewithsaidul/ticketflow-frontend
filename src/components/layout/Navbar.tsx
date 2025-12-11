@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useState } from "react";
 import Logo from "../shared/Logo";
 import ProfileAvatar from "./profile-avatar";
+import { UserRole } from "@/types";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,7 +50,7 @@ export function Navbar() {
             {user ? (
               <ProfileAvatar
                 name={user?.name}
-                userRole={user?.role}
+                userRole={user?.role as UserRole}
                 logOutFn={logout}
               />
             ) : (

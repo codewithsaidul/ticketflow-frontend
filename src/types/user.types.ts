@@ -10,8 +10,9 @@ export interface IUser {
   role: string;
   profileImg: string;
   status: string;
-  createdAt: Date;
-  updatedAt: Date;
+  isDeleted: boolean
+  createdAt: string;
+  updatedAt: string;
 }
 
 

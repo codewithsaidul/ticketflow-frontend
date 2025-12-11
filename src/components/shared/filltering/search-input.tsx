@@ -27,10 +27,8 @@ export default function SearchInput({
       // ১. বর্তমান URL প্যারামস কপি করা
       const params = new URLSearchParams(searchParams.toString());
       
-      // ২. URL-এ বর্তমানে যে ভ্যালু আছে সেটা চেক করা
       const currentUrlValue = params.get(queryKey) || "";
 
-      // 🔥 FIX: যদি স্টেট আর URL এর ভ্যালু সেইম হয়, তাহলে কিছুই করার দরকার নেই (Loop Break)
       if (currentUrlValue === searchValue) {
         return;
       }

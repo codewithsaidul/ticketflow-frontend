@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { role } from "@/constants/user.role.constants";
 import { useLogOut } from "@/hooks/useLogOut";
 import { useAppSelector } from "@/redux/hooks";
 import { getInitialsName } from "@/utils";
@@ -28,6 +29,19 @@ import Link from "next/link";
 export default function DashboardHeader() {
   const { user, isLoggedIn } = useAppSelector((state) => state.auth);
   const { logout } = useLogOut();
+
+  let profilePagePath = ""
+
+  if (user?.role === role.SUPERADMIN) {
+    profilePagePath = "/dashboard/administrator/profile"
+  } else if (user?.role === role.ADMIN) {
+    profilePagePath = "/dashboard/admin/profile"
+  } else if (user?.role === role.HOST) {
+    profilePagePath = "/dashboard/host/profile"
+  } else {
+    profilePagePath = ""
+  }
+
 
   return (
     <header className="bg-background/95 sticky top-0 z-50 flex h-16 w-full shrink-0 items-center gap-2 border-b backdrop-blur transition-[width,height] ease-linear ">
@@ -78,7 +92,7 @@ export default function DashboardHeader() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuItem className="cursor-pointer">
-                <Link href={`/dashboard/${user?.role}/profile`} className="flex items-center">
+                <Link href={profilePagePath} className="flex items-center">
                   <User className="mr-2 h-4 w-4" />
                   Profile Settings
                 </Link>

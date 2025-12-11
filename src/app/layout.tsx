@@ -4,14 +4,15 @@ import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
+import { Suspense } from "react";
+import GoogleAuthSync from "@/provider/GoogleAuthSync";
 
-// ১. বডি টেক্সটের জন্য Inter
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
 
-// ২. হেডিংয়ের জন্য Plus Jakarta Sans
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-jakarta",
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
 
   title: {
     default: "Velotix | The Fastest Ticketing Platform in Bangladesh",
-    template: "%s | Velotix", // যেমন: "Login | Velotix"
+    template: "%s | Velotix",
   },
 
   description:
@@ -45,7 +46,6 @@ export const metadata: Metadata = {
   ],
   creator: "Saidul Islam Rana",
 
-  // 6. Open Graph (Facebook/LinkedIn এ লিংক শেয়ার করলে যা দেখাবে)
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -64,7 +64,6 @@ export const metadata: Metadata = {
     ],
   },
 
-  // 7. Twitter Card (টুইটারে শেয়ার করার জন্য)
   twitter: {
     card: "summary_large_image",
     title: "Velotix | The Future of Ticketing",
@@ -87,6 +86,9 @@ export default function RootLayout({ children }: Readonly<IChildren>) {
         className={`${inter.variable} ${jakarta.variable} dark antialiased`}
       >
         <ReduxProviders>
+          <Suspense fallback={null}>
+            <GoogleAuthSync />
+          </Suspense>
           {children} <Toaster />
         </ReduxProviders>
       </body>
