@@ -1,12 +1,9 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Calendar, MapPin, Search } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-export default function HeroSection () {
-  const [searchQuery, setSearchQuery] = useState("")
-
+export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden gradient-bg">
       {/* Animated gradient overlay */}
@@ -30,16 +27,18 @@ export default function HeroSection () {
           <div className="space-y-6">
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-balance leading-tight">
               Book Your Next
-              <span className="gradient-text block">Experience at Lightning Speed</span>
+              <span className="gradient-text block">
+                Experience at Lightning Speed
+              </span>
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto text-balance">
-              Secure, seamless, and instant ticketing for concerts, movies, and events. Get access to premium
-              experiences in seconds.
+              Secure, seamless, and instant ticketing for concerts, movies, and
+              events. Get access to premium experiences in seconds.
             </p>
           </div>
 
           {/* Search Bar */}
-          <div className="flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto glass rounded-full p-2 sm:p-3">
+          {/* <div className="flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto glass rounded-full p-2 sm:p-3">
             <div className="flex-1 flex items-center gap-3 px-4 py-2">
               <Search className="w-5 h-5 text-muted-foreground shrink-0" />
               <input
@@ -58,26 +57,27 @@ export default function HeroSection () {
               <Calendar className="w-5 h-5 text-muted-foreground" />
               <span className="text-sm text-muted-foreground hidden sm:inline">Date</span>
             </button>
-          </div>
+          </div> */}
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Button
               size="lg"
-              className="rounded-full px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+              asChild
+              className="rounded-full px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold cursor-pointer"
             >
-              Explore Events
+              <Link href="/events">Explore Events</Link>
             </Button>
-            <Button
+            {/* <Button
               size="lg"
               variant="outline"
               className="rounded-full px-8 border-primary/30 hover:bg-primary/10 text-foreground bg-transparent"
             >
               Create Event
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
