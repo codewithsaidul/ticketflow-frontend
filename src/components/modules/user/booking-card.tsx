@@ -5,9 +5,8 @@ import { useInitPaymentMutation } from "@/redux/api/paymentApi/paymentApi";
 import { IApiErrorResponse } from "@/types";
 import { IBooking } from "@/types/bookings.types";
 import { formatDate } from "@/utils/formatter";
-import { CalendarClock, Loader2, MapPin, Ticket } from "lucide-react";
+import { CalendarClock, Download, Loader2, MapPin, Ticket } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import toast from "react-hot-toast";
 
 const statusStyles = {
@@ -17,7 +16,15 @@ const statusStyles = {
   cancel: "bg-orange-100 text-orange-700 border-orange-200",
 };
 
-export default function BookingCard({ booking }: { booking: IBooking }) {
+interface BookingCardProps {
+  booking: IBooking;
+  onViewTicket: (bookingId: string) => void;
+}
+
+export default function BookingCard({
+  booking,
+  onViewTicket,
+}: BookingCardProps) {
   const { event, payment, seats, totalAmount, status, _id } = booking;
   const paymentStatus = payment?.status || "unpaid";
 
@@ -156,27 +163,27 @@ export default function BookingCard({ booking }: { booking: IBooking }) {
               <Button
                 size="sm"
                 variant="default"
-                asChild
-                className="shadow-md shadow-primary/20"
+                className="shadow-md shadow-primary/20 cursor-pointer"
+                onClick={() => onViewTicket(_id)}
               >
-                <Link href={`/user/bookings/${_id}`}>Download Ticket</Link>
+                <Download className="w-4 h-4 mr-2" /> View Ticket
               </Button>
             )}
             {(paymentStatus === "failed" || paymentStatus === "unpaid") && (
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={handleRetryPayment}
-                  disabled={isRetrying}
-                  className="cursor-pointer"
-                >
-                  {isRetrying ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    "Retry Payment"
-                  )}
-                </Button>
-              )}
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={handleRetryPayment}
+                disabled={isRetrying}
+                className="cursor-pointer"
+              >
+                {isRetrying ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  "Retry Payment"
+                )}
+              </Button>
+            )}
           </div>
         </div>
       </div>

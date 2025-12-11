@@ -31,6 +31,7 @@ export const logoutService = async (
     }
   } catch (error) {
     const err = error as IApiErrorResponse;
+    console.log("🚀 ~ logoutService ~ err:", err)
 
     toast.error(err?.data?.message || "Logout failed", {
       id: toastId,

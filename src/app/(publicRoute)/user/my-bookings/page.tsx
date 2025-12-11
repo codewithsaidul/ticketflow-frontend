@@ -1,15 +1,18 @@
 "use client";
 
 import BookingCard from "@/components/modules/user/booking-card";
+import TicketViewDialog from "@/components/modules/user/ticket-view-dialog";
 import { Button } from "@/components/ui/button";
 import { useGetMyBookingsQuery } from "@/redux/api/bookingApi/bookingApi";
 import { IBooking } from "@/types/bookings.types";
 import { Loader2, Ticket, TicketX } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function MyBookingsPage() {
-
   const { data, isLoading, isError } = useGetMyBookingsQuery(undefined);
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState("");
 
   if (isLoading) {
     return (
@@ -40,12 +43,24 @@ export default function MyBookingsPage() {
     );
   }
 
+  const handleViewTicket = (bookingId: string) => {
+    setSelectedBookingId(bookingId);
+    setIsTicketModalOpen(true); // <--- Modal এখন true হবে
+  };
+
+  const handleCloseModal = () => {
+    setIsTicketModalOpen(false);
+    setSelectedBookingId("");
+  };
+
   const bookings = data?.data || [];
 
   return (
     <div className="space-y-6 container mx-auto py-20">
       <div>
-        <h1 className="text-3xl font-heading font-bold font-jakarta">My Bookings</h1>
+        <h1 className="text-3xl font-heading font-bold font-jakarta">
+          My Bookings
+        </h1>
         <p className="text-muted-foreground">
           Manage your upcoming events and purchase history.
         </p>
@@ -67,10 +82,21 @@ export default function MyBookingsPage() {
       ) : (
         <div className="grid grid-cols-1 gap-6">
           {bookings?.map((booking: IBooking) => (
-            <BookingCard key={booking._id} booking={booking} />
+            <BookingCard
+              key={booking._id}
+              booking={booking}
+              onViewTicket={handleViewTicket}
+            />
           ))}
         </div>
       )}
+
+      {/* 🔥 The Modal Component */}
+      <TicketViewDialog
+        open={isTicketModalOpen}
+        onClose={handleCloseModal}
+        bookingId={selectedBookingId}
+      />
     </div>
   );
 }
