@@ -41,19 +41,21 @@ The platform supports multiple user roles (User, Host, Admin, Super Admin) with 
 - QR Code Integration: Fetches a secure Base64 QR code image for physical ticket validation.
 
 ### 💻 Technology Stack
+~~~
+Category                              Technology                                Key Component / Implementation
 
-##### Category                        Technology                                Key Component / Implementation
+Framework                             Next.js (App Router)                      Hybrid Rendering (SSR/Client Components), Route Protection
 
+Styling                               Tailwind CSS                              Utility-first, Custom Theming
 
-Framework             Next.js (App Router)                    Hybrid Rendering (SSR/Client Components), Route Protection
-Styling                                     Tailwind CSS                                Utility-first, Custom Theming
-UI Library                      Shadcn UI                                   Accessible, headless components (Dialog, Table, Form, Select)
-State Management                    Redux Toolkit + RTK Query                           
-Centralized state, Advanced API caching, Token Refresh
-Forms                                           React Hook Form + Zod                               Schema validation and form management
-Deployment                        
-Vercel, Render                                  Continuous Integration/Deployment
+UI Library                            Shadcn UI                                 Accessible, headless components (Dialog, Table, Form, Select)
 
+State Management                      Redux Toolkit + RTK Query                 Centralized state, Advanced API caching, Token Refresh
+
+Forms                                 React Hook Form + Zod                     Schema validation and form management
+
+Deployment                            Vercel, Render                            Continuous Integration/Deployment
+~~~
 
 ## ⚙️ Getting Started
 
@@ -112,7 +114,7 @@ Open http://localhost:3000 with your browser to see the result.
 ## 🔑 Access Credentials
 
 To review the full functionality, please use the following credentials:
-
+~~~
 Role                                                Email                                       Password
 
 Super Admin                                         admin@ticketflow.com                        Ad@@1234
@@ -120,7 +122,7 @@ Super Admin                                         admin@ticketflow.com        
 Host                                                event@gmail.com                             12345678
 
 User                                                user@gmail.com                              12345678
-
+~~~
 ## 💡 Learn More
 
 - Next.js Documentation - learn about Next.js features and API.
