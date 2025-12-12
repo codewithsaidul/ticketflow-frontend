@@ -74,7 +74,7 @@ This is a Next.js project bootstrapped with create-next-app.
 ###### 1. Clone the Repository:
 
 ```
-git clone [Your GitHub Client Repo Link]
+git clone https://github.com/codewithsaidul/velotix-web
 cd velotix-web
 ```
 
