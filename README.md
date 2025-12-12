@@ -2,7 +2,7 @@
 
 #####
 
-![Velotix Homepage](https://rydex.vercel.app/velotixbanner.png)
+![Velotix Homepage](https://velotix-web.vercel.app/velotixbanner.png)
 
 ##### 
 
