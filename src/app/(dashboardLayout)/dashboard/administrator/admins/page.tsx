@@ -5,11 +5,14 @@ import RefreshButton from "@/components/shared/dashboard/refresh-btn";
 import SearchFilter from "@/components/shared/dashboard/search-fillter";
 import SelectFilter from "@/components/shared/dashboard/select-fillter";
 import { TableSkeleton } from "@/components/shared/dashboard/table-skeleton";
+import Loader from "@/components/shared/loader";
 import SecondaryPagination from "@/components/shared/secondary-pagination";
+import { Button } from "@/components/ui/button";
 import { useGetAllAdminsQuery } from "@/redux/api/adminApi/adminApi";
 import { UserRole } from "@/types/user.types";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { TicketX } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useTransition } from "react";
 
 const userStatus = [
   {
@@ -27,11 +30,13 @@ const userStatus = [
 ];
 
 export default function AdminManagementPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const page = searchParams.get("page") || 1;
   const searchTerm = searchParams.get("searchTerm") || "";
   const role = searchParams.get("role") || "";
   const status = searchParams.get("status") || "";
+  const [, startTransition] = useTransition();
 
   const { data, isLoading, isError } = useGetAllAdminsQuery({
     page: page.toString(),
@@ -41,8 +46,33 @@ export default function AdminManagementPage() {
     status,
   });
 
-  if (isLoading) return <div>Loading events...</div>;
-  if (isError) return <div>Error loading events.</div>;
+  const handleRefresh = () => {
+    startTransition(() => {
+      router.refresh();
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[80vh] items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
+
+  if (isError) {
+    return (
+      <div className="h-[80vh] flex flex-col items-center justify-center gap-2 text-red-500">
+        <TicketX className="w-12 h-12" />
+        <p className="font-medium">Failed to load admins data.</p>
+        <p className="text-sm">Please try refreshing the page.</p>
+        <Button variant="outline" onClick={handleRefresh} className="cursor-pointer">
+          Try again
+        </Button>
+      </div>
+    );
+  }
 
   const users = data?.data;
   const meta = data?.meta;

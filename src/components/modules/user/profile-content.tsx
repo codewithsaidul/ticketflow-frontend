@@ -1,5 +1,6 @@
 "use client";
 
+import Loader from "@/components/shared/loader";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,6 @@ import { IUser } from "@/types";
 import {
   CalendarDays,
   Edit,
-  Loader2,
   LucideIcon,
   Mail,
   MapPin,
@@ -20,14 +20,12 @@ import {
 
 export default function ProfileContent() {
   const { data, isLoading } = useGetMeQuery(undefined);
-  console.log("🚀 ~ ProfileContent ~ data:", data)
   const user = data?.data as IUser;
-  console.log("🚀 ~ ProfileContent ~ user:", user)
 
   if (isLoading) {
     return (
       <div className="flex h-[80vh] items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <Loader />
       </div>
     );
   }
