@@ -115,14 +115,15 @@ Open http://localhost:3000 with your browser to see the result.
 
 To review the full functionality, please use the following credentials:
 ~~~
-Role                                                Email                                       Password
+Role                         Email                                       Password
 
-Super Admin                                         admin@ticketflow.com                        Ad@@1234
+Super Admin                  admin@ticketflow.com                        Ad@@1234
 
-Host                                                event@gmail.com                             12345678
+Host                         event@gmail.com                             12345678
 
-User                                                user@gmail.com                              12345678
+User                         user@gmail.com                              12345678
 ~~~
+
 ## 💡 Learn More
 
 - Next.js Documentation - learn about Next.js features and API.
