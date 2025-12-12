@@ -1,5 +1,12 @@
 # 🎫 Velotix - High-Performance Event Ticketing Platform (Client)
 
+#####
+
+![Velotix Homepage](https://rydex.vercel.app/velotixbanner.png)
+
+##### 
+
+
 ## 🚀 Project Overview
 
 Velotix is a full-stack, high-performance event ticketing system designed to handle high concurrency and ensure financial integrity during seat booking. This frontend client, built with Next.js, provides a modern, responsive, and secure user experience for event discovery, seat selection, and ticket management.
