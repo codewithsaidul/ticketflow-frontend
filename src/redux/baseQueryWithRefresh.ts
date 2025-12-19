@@ -9,6 +9,10 @@ import { Mutex } from "async-mutex";
 const mutex = new Mutex();
 
 const baseUrl = "/api/v1"
+// const isDev = process.env.NODE_ENV === "development";
+// const backendUrl = isDev
+//   ? process.env.NEXT_PUBLIC_DEV_BACKEND_URL
+//   : process.env.NEXT_PUBLIC_PROD_BACKEND_URL;
 
 const baseQuery = fetchBaseQuery({
   baseUrl,

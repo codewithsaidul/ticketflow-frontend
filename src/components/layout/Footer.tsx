@@ -82,7 +82,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="border-t border-border pt-8 flex flex-col md:flex-row flex-wrap items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
             &copy; {currentYear} Velotix. All rights reserved.
           </p>

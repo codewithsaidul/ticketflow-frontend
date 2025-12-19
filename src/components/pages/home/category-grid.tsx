@@ -2,12 +2,14 @@ import { CATEGORIES } from "@/data";
 
 export default function CategoryGrid() {
   return (
-    <section className="relative w-full py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <section className="relative w-full py-20 px-4 lg:px-0">
+      <div className="container mx-auto">
         {/* Header */}
         <div className="mb-12 space-y-4">
           <div className="inline-block">
-            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Browse</span>
+            <span className="text-sm font-semibold text-primary uppercase tracking-wider">
+              Browse
+            </span>
           </div>
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground">
             Explore by <span className="gradient-text">Category</span>
@@ -17,9 +19,9 @@ export default function CategoryGrid() {
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {CATEGORIES.map((category) => {
-            const Icon = category.icon
+            const Icon = category.icon;
             return (
-              <button
+              <div
                 key={category.name}
                 className="group relative overflow-hidden rounded-xl glass p-8 hover:border-primary/50 transition-all duration-300 text-left hover:scale-105"
               >
@@ -36,17 +38,19 @@ export default function CategoryGrid() {
                     <h3 className="text-xl font-bold text-foreground group-hover:gradient-text transition-all">
                       {category.name}
                     </h3>
-                    <p className="text-sm text-muted-foreground mt-1">{category.count}</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {category.count}
+                    </p>
                   </div>
                 </div>
 
                 {/* Hover indicator */}
                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity" />
-              </button>
-            )
+              </div>
+            );
           })}
         </div>
       </div>
     </section>
-  )
+  );
 }

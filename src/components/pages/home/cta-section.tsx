@@ -33,14 +33,14 @@ export default function CTASection() {
           </div>
 
           {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
-              size="lg"
-              className="rounded-full px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold group"
+              asChild
+              className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold group m-2 min-h-12"
             >
               <Link href="/auth/login" className="flex items-center gap-2">
                 Become an Organizer
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
             {/* <Button
