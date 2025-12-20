@@ -57,9 +57,9 @@ export function EventCard({
         </div>
 
         {/* Price & Button */}
-        <div className="flex items-center justify-between pt-4 border-t border-primary/10">
+        <div className="flex items-center justify-between pt-4 border-t border-primary/60">
           <div className="flex items-center gap-1">
-            <span className="text-2xl font-bold text-primary">৳{price}</span>
+            <span className="text-2xl font-bold text-light">৳ {price}</span>
           </div>
           <Button
             size="lg"

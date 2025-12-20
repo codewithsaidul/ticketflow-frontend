@@ -29,9 +29,9 @@ export default function HeroSection() {
 
       <div className="relative z-10 w-full container mx-auto px-4 lg:px-0 py-20">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* বাম পাশ: কন্টেন্ট সেকশন */}
+
           <div className="space-y-10 text-center lg:text-left">
-            {/* ইন্টারেক্টিভ ব্যাজ */}
+
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-sm font-medium">
               <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-ping" />
               <span className="text-zinc-400">
@@ -55,7 +55,7 @@ export default function HeroSection() {
               </p>
             </div>
 
-            {/* কল টু অ্যাকশনস */}
+
             <div className="flex max-lg:justify-center flex-wrap gap-5">
               <Link
                 href="/events"
@@ -67,7 +67,6 @@ export default function HeroSection() {
               </Link>
             </div>
 
-            {/* লাইভ ইউজার ফিডব্যাক */}
             <div className="flex max-lg:justify-center items-center gap-6 pt-4">
               <div className="flex -space-x-3">
                 {[1, 2, 3, 4].map((i) => (
@@ -106,11 +105,11 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* ডান পাশ: প্রিমিয়াম ভিজ্যুয়াল কার্ড (Digital Ticket Pass) */}
+
           <div className="relative hidden lg:flex justify-center items-center">
-            {/* মেইন টিকেট কার্ড */}
+            
             <div className="relative w-[400px] h-[540px] rounded-[40px] border border-white/10 bg-linear-to-br from-white/10 to-transparent backdrop-blur-2xl p-8 shadow-2xl flex flex-col justify-between overflow-hidden group">
-              {/* কার্ডের ভেতর গ্লো ইফেক্ট */}
+              
               <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/20 blur-[60px] group-hover:bg-blue-500/40 transition-colors" />
 
               <div className="space-y-8 relative z-10">
