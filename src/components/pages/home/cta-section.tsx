@@ -53,14 +53,14 @@ export default function CTASection() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 pt-8 border-t border-primary/10">
+          <div className="grid grid-cols-3 gap-4 pt-8 border-t border-slate-600">
             {[
               { label: "Active Events", value: "10K+" },
               { label: "Sold Tickets", value: "5M+" },
               { label: "Happy Organizers", value: "2K+" },
             ].map((stat) => (
               <div key={stat.label} className="space-y-1">
-                <div className="text-2xl sm:text-3xl font-bold text-primary">
+                <div className="text-2xl sm:text-3xl font-bold text-light">
                   {stat.value}
                 </div>
                 <div className="text-xs sm:text-sm text-muted-foreground">
