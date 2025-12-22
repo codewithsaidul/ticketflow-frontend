@@ -11,8 +11,8 @@ export default async function FeaturedEvents() {
   const actualEvents = JSON.parse(JSON.stringify(rawEvents));
 
   return (
-    <section className="relative w-full py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <section className="relative w-full py-20 px-4 lg:px-0">
+      <div className="container mx-auto">
         {/* Header */}
         <div className="mb-12 space-y-4">
           <div className="inline-block">
@@ -23,7 +23,7 @@ export default async function FeaturedEvents() {
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground">
             Trending <span className="gradient-text">Now</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl">
+          <p className="text-lg text-muted-foreground w-full max-w-2xl">
             Discover the hottest events happening this season. Book your tickets
             before they sell out.
           </p>
@@ -33,7 +33,7 @@ export default async function FeaturedEvents() {
         <FeaturedSlider events={actualEvents} />
 
         <div className="flex justify-center mt-12">
-          <Button className="cursor-pointer text-center mx-auto">
+          <Button asChild size="lg" className="cursor-pointer text-center min-h-12 mx-auto">
             <Link href="/events">Browse Events</Link>
           </Button>
         </div>

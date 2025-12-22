@@ -1,7 +1,8 @@
-import { Button } from "@/components/ui/button"
-import { ArrowRight, Sparkles } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Sparkles } from "lucide-react";
+import Link from "next/link";
 
-export default function CTASection () {
+export default function CTASection() {
   return (
     <section className="relative w-full py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Animated background */}
@@ -22,47 +23,54 @@ export default function CTASection () {
           {/* Headline */}
           <div className="space-y-4">
             <h2 className="text-4xl text-center sm:text-5xl font-bold text-foreground">
-              Ready to Host Your <span className="gradient-text">Next Event?</span>
+              Ready to Host Your{" "}
+              <span className="gradient-text">Next Event?</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Join thousands of event organizers who trust Velotix. Get started in minutes and start selling tickets
-              today.
+              Join thousands of event organizers who trust Velotix. Get started
+              in minutes and start selling tickets today.
             </p>
           </div>
 
           {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
-              size="lg"
-              className="rounded-full px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold group"
+              asChild
+              className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold group m-2 min-h-12"
             >
-              Become an Organizer
-              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              <Link href="/auth/login" className="flex items-center gap-2">
+                Become an Organizer
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </Button>
-            <Button
+            {/* <Button
               size="lg"
               variant="outline"
               className="rounded-full px-8 border-primary/30 hover:bg-primary/10 text-foreground bg-transparent"
             >
               Learn More
-            </Button>
+            </Button> */}
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 pt-8 border-t border-primary/10">
+          <div className="grid grid-cols-3 gap-4 pt-8 border-t border-slate-600">
             {[
               { label: "Active Events", value: "10K+" },
               { label: "Sold Tickets", value: "5M+" },
               { label: "Happy Organizers", value: "2K+" },
             ].map((stat) => (
               <div key={stat.label} className="space-y-1">
-                <div className="text-2xl sm:text-3xl font-bold text-primary">{stat.value}</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">{stat.label}</div>
+                <div className="text-2xl sm:text-3xl font-bold text-light">
+                  {stat.value}
+                </div>
+                <div className="text-xs sm:text-sm text-muted-foreground">
+                  {stat.label}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }

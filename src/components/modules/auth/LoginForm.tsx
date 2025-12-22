@@ -1,6 +1,4 @@
 "use client";
-
-import { GoogleIcon } from "@/components/icon/google-icon";
 import Logo from "@/components/shared/Logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,14 +21,16 @@ import { LoginFormValues, loginSchema } from "@/validation/auth.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import GoogleLogin from "./GoogleLogin";
+
+
 
 export function LoginForm() {
   const [login, { isLoading }] = useLoginMutation();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -75,12 +75,6 @@ export function LoginForm() {
         id: toastId,
       });
     }
-  };
-
-  // 👇 ADD THIS FUNCTION
-  const handleGoogleLogin = () => {
-    const redirectPath = searchParams.get("redirect") || "/";
-    window.location.href = `/api/v1/auth/google?redirect=${redirectPath}`;
   };
 
   return (
@@ -166,17 +160,7 @@ export function LoginForm() {
 
                 {/* Social Logins */}
                 <div className="w-full">
-                  <Button
-                    variant="outline"
-                    type="button"
-                    aria-label="Login with Google"
-                    className="w-full cursor-pointer"
-                    disabled={isLoading}
-                    onClick={handleGoogleLogin}
-                  >
-                    <GoogleIcon />
-                    Signin with Google
-                  </Button>
+                  <GoogleLogin isLoading={isLoading} />
                 </div>
 
                 <div className="text-center text-sm text-muted-foreground">

@@ -6,8 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-
-import { GoogleIcon } from "@/components/icon/google-icon";
 import Logo from "@/components/shared/Logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -39,6 +37,11 @@ import { IApiErrorResponse } from "@/types";
 import { useRegisterMutation } from "@/redux/api/authApi/authApi";
 import { useRouter } from "next/navigation";
 import PasswordInput from "@/components/ui/password-input";
+import GoogleLogin from "./GoogleLogin";
+
+
+
+
 
 export default function RegisterForm() {
   const [interests, setInterests] = useState<string[]>([]);
@@ -53,7 +56,7 @@ export default function RegisterForm() {
       name: "",
       email: "",
       password: "",
-      confirmPassword: "", // 🔥 Default value added
+      confirmPassword: "", 
       phone: "",
       bio: "",
       location: "",
@@ -101,6 +104,7 @@ export default function RegisterForm() {
     }
 
   }
+
 
   return (
     <div className="flex flex-col gap-6 w-full my-10">
@@ -336,16 +340,7 @@ export default function RegisterForm() {
                   </div>
                 </div>
 
-                <Button
-                  variant="outline"
-                  type="button"
-                  aria-label="Login with Google"
-                  className="w-full cursor-pointer"
-                  // disabled={isLoading}
-                >
-                  <GoogleIcon />
-                  Signin with Google
-                </Button>
+                <GoogleLogin isLoading={isLoading} />
 
                 <div className="text-center text-sm text-muted-foreground mt-4">
                   Already have an account?{" "}

@@ -5,10 +5,13 @@ import RefreshButton from "@/components/shared/dashboard/refresh-btn";
 import SearchFilter from "@/components/shared/dashboard/search-fillter";
 import SelectFilter from "@/components/shared/dashboard/select-fillter";
 import { TableSkeleton } from "@/components/shared/dashboard/table-skeleton";
+import Loader from "@/components/shared/loader";
 import SecondaryPagination from "@/components/shared/secondary-pagination";
+import { Button } from "@/components/ui/button";
 import { useGetAllBookingsQuery } from "@/redux/api/bookingApi/bookingApi";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { TicketX } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useTransition } from "react";
 
 const BOOKING_STATUS_OPTIONS = [
   { label: "Confirmed", value: "confirmed" },
@@ -19,6 +22,8 @@ const BOOKING_STATUS_OPTIONS = [
 
 export default function BookingsPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const [, startTransition] = useTransition();
   const page = searchParams.get("page") || 1;
   const searchTerm = searchParams.get("searchTerm") || "";
   const status = searchParams.get("status") || "";
@@ -29,11 +34,33 @@ export default function BookingsPage() {
     status,
   });
 
-  if (isLoading) return <div>Loading bookings...</div>;
-  if (isError) return <div>Error loading bookings.</div>;
+  const handleRefresh = () => {
+    startTransition(() => {
+      router.refresh();
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[80vh] items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+  if (isError) {
+    return (
+      <div className="h-[80vh] flex flex-col items-center justify-center gap-2 text-red-500">
+        <TicketX className="w-12 h-12" />
+        <p className="font-medium">Failed to load bookings.</p>
+        <p className="text-sm">Please try refreshing the page.</p>
+        <Button variant="outline" onClick={handleRefresh} className="cursor-pointer">
+          Try again
+        </Button>
+      </div>
+    );
+  }
 
   const bookings = data?.data;
-  console.log("🚀 ~ BookingsPage ~ bookings:", bookings)
   const meta = data?.meta;
 
   return (

@@ -1,5 +1,6 @@
 "use client";
 
+import Loader from "@/components/shared/loader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { role } from "@/constants/user.role.constants";
@@ -7,7 +8,7 @@ import { useGetDashboardStatsQuery } from "@/redux/api/statsApi/statsApi";
 import { useAppSelector } from "@/redux/hooks";
 import { UserRole } from "@/types";
 import { IStats } from "@/types/stats.types";
-import { CalendarDays, DollarSign, Loader2, Ticket, Users } from "lucide-react";
+import { CalendarDays, DollarSign, Ticket, Users } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
@@ -69,8 +70,8 @@ export default function DashboardOverviewPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8 h-screen flex justify-center">
-        <Loader2 className="animate-spin w-8 h-8 text-primary" />
+      <div className="flex h-[80vh] items-center justify-center">
+        <Loader />
       </div>
     );
   }

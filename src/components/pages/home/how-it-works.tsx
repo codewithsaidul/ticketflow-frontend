@@ -4,8 +4,8 @@ import { ArrowRight } from "lucide-react";
 
 export default function HowItWorks () {
   return (
-    <section className="relative w-full py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <section className="relative w-full py-20 px-4 lg:px-0">
+      <div className="container mx-auto">
         {/* Header */}
         <div className="mb-16 space-y-4 text-center">
           <div className="inline-block">

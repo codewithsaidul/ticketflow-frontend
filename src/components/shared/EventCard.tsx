@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin } from "lucide-react";
@@ -42,7 +40,7 @@ export function EventCard({
       {/* Content */}
       <div className="p-4 flex flex-col flex-1">
         <Link href={`/events/${slug}`} className="cursor-pointer">
-          <h3 className="text-lg font-semibold text-foreground hover:text-primary transition-all hover:underline line-clamp-2">
+          <h3 className="text-lg font-semibold text-foreground hover:text-primary transition-all hover:underline line-clamp-1">
             {title} ggfdgfd
           </h3>
         </Link>
@@ -59,13 +57,14 @@ export function EventCard({
         </div>
 
         {/* Price & Button */}
-        <div className="flex items-center justify-between pt-4 border-t border-primary/10">
+        <div className="flex items-center justify-between pt-4 border-t border-primary/60">
           <div className="flex items-center gap-1">
-            <span className="text-2xl font-bold text-primary">৳{price}</span>
+            <span className="text-2xl font-bold text-light">৳ {price}</span>
           </div>
           <Button
-            size="sm"
-            className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
+            size="lg"
+            asChild
+            className="rounded-full  bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
           >
             <Link href={`/booking/${slug}`}>Book Now</Link>
           </Button>
