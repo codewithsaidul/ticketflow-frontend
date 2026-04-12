@@ -1,6 +1,7 @@
+import { ISeat } from "@/types";
 import { useEffect, useState } from "react";
 
-export const useSeatSelection = (seats, userId) => {
+export const useSeatSelection = (seats: ISeat[], userId: string) => {
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [optimisticLockedSeats, setOptimisticLockedSeats] = useState<string[]>([]);
 
@@ -11,16 +12,23 @@ export const useSeatSelection = (seats, userId) => {
         (s) => s.status === "locked" && s.lockedBy === userId
       ).map((s) => s._id) || [];
 
-    setSelectedSeats(lockedByMe);
+    const func = () => {
+      setSelectedSeats(lockedByMe);
+    }
+    func();
   }, [seats, userId]);
 
   // clean optimistic
   useEffect(() => {
-    setOptimisticLockedSeats((prev) =>
+    const optimisticLock = () => {
+          setOptimisticLockedSeats((prev) =>
       prev.filter((id) =>
         seats.some((s) => s._id === id && s.status === "locked")
       )
     );
+    }
+
+    optimisticLock()
   }, [seats]);
 
   return {

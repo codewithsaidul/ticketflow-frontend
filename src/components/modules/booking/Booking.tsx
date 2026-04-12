@@ -116,7 +116,6 @@ export default function Booking({ slug }: { slug: string }) {
               seats={seats}
               meta={meta}
               selectedSeats={selectedSeats}
-              onSelectedSeat={setSelectedSeats}
               onSeatClick={handleSeatClick}
             />
           </div>
