@@ -21,6 +21,7 @@ export default function Booking({ slug }: { slug: string }) {
     eventData?._id,
     {
       pollingInterval: 30000,
+      skip: !eventData?._id
     }
   );
 
@@ -31,6 +32,7 @@ export default function Booking({ slug }: { slug: string }) {
   const event = eventData;
   const seats = seatData?.data || [];
   const meta = seatData?.meta;
+
 
   const handleSeatClick = (seatId: string) => {
     if (selectedSeats.includes(seatId)) {
@@ -46,8 +48,9 @@ export default function Booking({ slug }: { slug: string }) {
 
   const basePrice = meta?.basePrice || 0;
   const totalPrice = selectedSeats.length * basePrice;
-  const vat = totalPrice * 0.05; // 5% VAT (Optional)
-  const grandTotal = totalPrice + vat;
+  const vat = 0;
+  // const vat = totalPrice * 0.05;
+  // const grandTotal = totalPrice + vat;
 
   const handleCheckout = async () => {
     try {
@@ -55,14 +58,16 @@ export default function Booking({ slug }: { slug: string }) {
         eventId: eventData._id,
         seatIds: selectedSeats,
       }).unwrap();
+      console.log("🚀 ~ handleCheckout ~ res:", res)
 
       toast.success("Booking initiated! Redirecting to payment...");
 
       if (res.data?.paymentUrl) {
-        window.location.href = res.data.paymentUrl; // SSLCommerz Redirect
+        window.location.href = res.data.paymentUrl;
       }
     } catch (error) {
       const err = error as IApiErrorResponse;
+      console.log("🚀 ~ handleCheckout ~ err:", err)
       toast.error(err.data?.message || "Booking failed. Please try again.");
     }
   };
@@ -126,7 +131,7 @@ export default function Booking({ slug }: { slug: string }) {
               unitPrice={basePrice}
               totalPrice={totalPrice}
               vat={vat}
-              grandTotal={grandTotal}
+              grandTotal={totalPrice}
               isLoading={isBookingLoading}
               onProceed={handleCheckout}
             />

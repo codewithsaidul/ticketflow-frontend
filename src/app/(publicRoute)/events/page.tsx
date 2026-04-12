@@ -43,7 +43,7 @@ export default async function AllEvents({
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+      <div className="flex flex-row flex-wrap justify-between items-center gap-4 mb-8">
         <h1 className="text-3xl font-heading font-bold text-foreground">
           All Events
         </h1>

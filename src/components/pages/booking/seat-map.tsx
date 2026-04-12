@@ -1,18 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useSocket } from "@/hooks/useSocket";
 import { cn } from "@/lib/utils";
-import { useSyncSeatsMutation } from "@/redux/api/seatApi/seatApi";
+import {
+  useGetEventSeatsQuery,
+  useSyncSeatsMutation,
+} from "@/redux/api/seatApi/seatApi";
 import { useAppSelector } from "@/redux/hooks";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { io } from "socket.io-client";
-
-const socket = io(process.env.NEXT_PUBLIC_API_URL as string, {
-  withCredentials: true,
-  transports: ["websocket"],
-});
 
 interface ISeat {
   _id: string;
@@ -35,8 +32,8 @@ interface SeatMapProps {
 
 export default function SeatMap({
   eventId,
-  refetch,
-  isLoading,
+  refetch, // Event refetch
+  isLoading: isEventLoading,
   seats,
   meta,
   selectedSeats,
@@ -44,99 +41,112 @@ export default function SeatMap({
 }: SeatMapProps) {
   const [syncSeats] = useSyncSeatsMutation();
   const { user } = useAppSelector((state) => state.auth);
-  const myUserId = user?._id;
+  const myUserId = user?.userId;
+  const { socket, connected } = useSocket();
+
+  // Seat API রিফেচ
+  const { refetch: refetchSeats, isLoading: isSeatsLoading } =
+    useGetEventSeatsQuery(eventId);
 
   const [optimisticLockedSeats, setOptimisticLockedSeats] = useState<string[]>(
-    []
+    [],
   );
+  const [initialSynced, setInitialSynced] = useState(false);
+
   useEffect(() => {
-    if (!myUserId) return;
+    if (!isSeatsLoading && seats && myUserId && !initialSynced) {
+      const myLockedInDB = seats
+        .filter((s: ISeat) => s.status === "locked" && s.lockedBy === myUserId)
+        .map((s: ISeat) => s._id);
+
+      myLockedInDB.forEach((id: string) => {
+        if (!selectedSeats.includes(id)) onSeatClick(id);
+      });
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setInitialSynced(true);
+    }
+  }, [
+    isSeatsLoading,
+    seats,
+    myUserId,
+    initialSynced,
+    selectedSeats,
+    onSeatClick,
+  ]);
+
+  useEffect(() => {
+    if (!myUserId || !socket || !connected) return;
 
     socket.emit("join_ticket_room", eventId);
 
     socket.on(
-      "seats-updated",
-      (payload: { updaterId: string; releasedSeatIds?: string[] }) => {
-        if (
-          payload.releasedSeatIds &&
-          payload.updaterId === "SYSTEM_CRON_JOB"
-        ) {
-          console.log(
-            "🔓 System Unlock received for expired seats. Cleaning up optimistic state."
-          );
-
-          setOptimisticLockedSeats((prevSeats) =>
-            prevSeats.filter(
-              (seatId) => !payload.releasedSeatIds!.includes(seatId)
-            )
-          );
-
-          refetch();
-        } else {
-          console.log(`⚡ DB Updated by ${payload.updaterId}. Refetching...`);
-          setOptimisticLockedSeats([]);
-          refetch();
+      "seat-optimistic-lock",
+      (payload: { seatIds: string[]; lockerId: string }) => {
+        if (String(payload.lockerId) !== String(myUserId)) {
+          setOptimisticLockedSeats((prev) => [
+            ...new Set([...prev, ...payload.seatIds]),
+          ]);
         }
-      }
+      },
     );
 
     socket.on(
-      "seat-optimistic-lock",
+      "seat-optimistic-unlock",
       (payload: { seatIds: string[]; lockerId: string }) => {
-        if (payload.lockerId !== myUserId) {
-          console.log(
-            "⚡ Optimistic Lock received from another user:",
-            payload.seatIds
+        if (String(payload.lockerId) !== String(myUserId)) {
+          setOptimisticLockedSeats((prev) =>
+            prev.filter((id) => !payload.seatIds.includes(id)),
           );
-          setOptimisticLockedSeats((prev) => [...prev, ...payload.seatIds]);
         }
-      }
+      },
+    );
+
+    socket.on(
+      "seats-updated",
+      async (payload: { updaterId: string; releasedSeatIds: string[] }) => {
+        if (payload.updaterId !== myUserId) {
+          await refetchSeats();
+          refetch();
+
+          if (payload.releasedSeatIds) {
+            setOptimisticLockedSeats((prev) =>
+              prev.filter((id) => !payload.releasedSeatIds!.includes(id)),
+            );
+          }
+        }
+      },
     );
 
     return () => {
-      socket.off("seats-updated");
       socket.off("seat-optimistic-lock");
+      socket.off("seat-optimistic-unlock");
+      socket.off("seats-updated");
     };
-  }, [eventId, refetch, myUserId]);
-
-  useEffect(() => {
-    if (!myUserId) return;
-
-    const timer = setTimeout(() => {
-      if (selectedSeats.length > 0) {
-        console.log(
-          `⏱️ Debouncing finished. Syncing ${selectedSeats.length} seats to DB.`
-        );
-      }
-
-      syncSeats({ eventId, seatIds: selectedSeats })
-        .unwrap()
-        .catch((err) => {
-          if (err.status === 409) {
-            toast.error("One or more seats were taken just now. Retrying...");
-            refetch();
-          }
-        });
-    }, 50);
-
-    return () => clearTimeout(timer);
-  }, [selectedSeats, eventId, syncSeats, refetch, myUserId]);
+  }, [eventId, socket, connected, myUserId, refetch, refetchSeats]);
 
   const handleSeatClickLocal = (seatId: string) => {
+    const isCurrentlySelected = selectedSeats.includes(seatId);
     onSeatClick(seatId);
 
-    const isSelecting = !selectedSeats.includes(seatId);
+    if (socket && connected) {
+      const eventName = isCurrentlySelected
+        ? "client-unLocking-seat"
+        : "client-locking-seat";
 
-    if (isSelecting) {
-      socket.emit("client-locking-seat", {
+      socket.emit(eventName, {
         eventId,
         seatIds: [seatId],
         userId: myUserId,
       });
     }
+
+    syncSeats({
+      eventId,
+      seatIds: [seatId],
+    });
   };
 
-  if (isLoading) {
+  if (isSeatsLoading && isEventLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="animate-spin text-primary w-8 h-8" />
@@ -153,108 +163,48 @@ export default function SeatMap({
   }
 
   return (
-    <div className="w-full bg-card border rounded-xl shadow-sm p-4 sm:p-8">
-      {/* Screen Visual */}
-      <div className="w-full max-w-lg mx-auto mb-10">
-        <h3 className="text-xl font-heading font-bold mb-8 text-center">
-          Select Seats
-        </h3>
-        <div className="h-2 w-full bg-primary/20 rounded-full shadow-[0_4px_20px_-2px_rgba(var(--primary),0.3)]" />
-        <p className="text-center text-xs text-muted-foreground mt-2 uppercase tracking-widest font-medium">
-          Stage / Screen
-        </p>
+    <div className="w-full bg-card border rounded-xl p-4 sm:p-8">
+      <div
+        className="grid gap-2 sm:gap-3 mx-auto"
+        style={{
+          gridTemplateColumns: `repeat(${meta?.totalCols || 10}, minmax(0, 1fr))`,
+        }}
+      >
+        {seats.map((seat: ISeat) => {
+          const isSelected = selectedSeats.includes(seat._id);
+          const isBooked = seat.status === "booked";
+
+          // অন্য কারো লক (সকেট বা ডিবি থেকে)
+          const isLockedByOthers =
+            (seat.status === "locked" && seat.lockedBy !== myUserId) ||
+            (optimisticLockedSeats.includes(seat._id) && !isSelected);
+
+          const isActiveByUser = isSelected; // পিওর অপটিমিস্টিক UI
+          const isDisabled = isBooked || isLockedByOthers;
+
+          return (
+            <Button
+              key={seat._id}
+              disabled={isDisabled}
+              onClick={() => handleSeatClickLocal(seat._id)}
+              className={cn(
+                "h-10 w-10 sm:h-12 sm:w-12 rounded-lg text-xs font-bold transition-all border",
+                !isDisabled &&
+                  !isActiveByUser &&
+                  "bg-background text-foreground hover:border-primary",
+                isActiveByUser &&
+                  "bg-primary text-primary-foreground border-primary scale-105 shadow-lg",
+                isBooked &&
+                  "bg-muted text-muted-foreground opacity-50 cursor-not-allowed",
+                isLockedByOthers &&
+                  "bg-yellow-100 text-yellow-600 border-yellow-300 animate-pulse",
+              )}
+            >
+              {isBooked ? "X" : seat.label}
+            </Button>
+          );
+        })}
       </div>
-
-      {/* Grid */}
-      <div className="w-full overflow-x-auto pb-4">
-        <div
-          className="grid gap-2 sm:gap-3 mx-auto min-w-fit"
-          style={{
-            gridTemplateColumns: `repeat(${
-              meta?.totalCols || 10
-            }, minmax(0, 1fr))`,
-            width: meta?.totalCols > 8 ? "max-content" : "100%",
-          }}
-        >
-          {seats.map((seat) => {
-            // ১. আমার সিলেক্ট করা কিনা
-            const isSelected = selectedSeats.includes(seat._id);
-            // ২. বুকড কিনা (ডাটাবেস থেকে)
-            const isBooked = seat.status === "booked";
-
-            // ৩. ডাটাবেস লক লজিক
-            const isDbLockedByMe =
-              seat.status === "locked" && seat.lockedBy === myUserId;
-            const isDbLockedByOthers =
-              seat.status === "locked" && seat.lockedBy !== myUserId;
-
-            // ৪. অপটিমিস্টিক লক লজিক (সকেট থেকে আসা)
-            // যদি অপটিমিস্টিক লিস্টে থাকে এবং আমি সিলেক্ট না করে থাকি
-            const isOptimisticLocked =
-              optimisticLockedSeats.includes(seat._id) && !isSelected;
-
-            // ৫. ফাইনাল লক স্ট্যাটাস (অন্যদের দ্বারা)
-            const isLockedByOthers = isDbLockedByOthers || isOptimisticLocked;
-
-            // ৬. বাটন ডিজেবল হবে কখন?
-            const isDisabled = isBooked || isLockedByOthers;
-
-            // ৭. আমার নিজের কাছে সিটটা কেমন দেখাবে (সিলেক্টেড বা আমার লক করা হলে নীল)
-            const isActiveByUser = isSelected || isDbLockedByMe;
-
-            return (
-              <Button
-                key={seat._id}
-                disabled={isDisabled}
-                onClick={() => handleSeatClickLocal(seat._id)}
-                className={cn(
-                  "h-10 w-10 sm:h-12 sm:w-12 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center border select-none cursor-pointer",
-
-                  // A. Available (সাদা)
-                  !isDisabled &&
-                    !isActiveByUser &&
-                    "bg-background border-border text-foreground hover:border-primary hover:text-white hover:shadow-md",
-
-                  // B. Selected / Locked by Me (নীল)
-                  isActiveByUser &&
-                    "bg-primary text-primary-foreground border-primary shadow-lg scale-105 ring-2 ring-primary/20",
-
-                  // C. Booked (ধূসর)
-                  isBooked &&
-                    "bg-muted text-muted-foreground cursor-not-allowed border-transparent opacity-50",
-
-                  // D. Locked by Others (হলুদ - ওয়ার্নিং)
-                  isLockedByOthers &&
-                    "bg-yellow-100 text-yellow-600 border-yellow-300 cursor-not-allowed animate-pulse"
-                )}
-                title={`Seat ${seat.label}`}
-              >
-                {isBooked ? "X" : seat.label}
-              </Button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Legend */}
-      <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mt-8 border-t pt-6">
-        <LegendItem
-          color="bg-background border border-border"
-          label="Available"
-        />
-        <LegendItem color="bg-primary" label="Selected" />
-        <LegendItem color="bg-muted opacity-50" label="Booked" />
-        <LegendItem color="bg-yellow-400" label="Locked (Others)" />
-      </div>
-    </div>
-  );
-}
-
-function LegendItem({ color, label }: { color: string; label: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <div className={cn("w-4 h-4 rounded", color)} />
-      <span className="text-sm text-muted-foreground font-medium">{label}</span>
     </div>
   );
 }

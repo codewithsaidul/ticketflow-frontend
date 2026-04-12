@@ -40,15 +40,15 @@ export default function HeroSection() {
             </div>
 
             <div className="space-y-6">
-              <h1 className="text-6xl md:text-7xl xl:text-8xl font-black tracking-tight leading-[0.95] text-white">
-                GET YOUR <br />
+              <h1 className="max-[350px]:text-3xl max-[450px]:text-5xl text-6xl md:text-7xl xl:text-8xl font-black tracking-tight  text-white">
+                GET YOUR {""}
                 <span className="bg-linear-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
                   FRONT ROW
                 </span>{" "}
-                <br />
+                
                 EXPERIENCE.
               </h1>
-              <p className="text-lg md:text-xl text-zinc-400 max-w-xl leading-relaxed">
+              <p className="max-[450px]:text-base text-lg md:text-xl text-zinc-400 max-w-xl leading-relaxed">
                 The world&apos;s fastest ticketing engine. Secure your spot at
                 the most exclusive concerts, tech conferences, and sporting
                 events with zero latency.
