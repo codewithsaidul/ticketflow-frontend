@@ -174,12 +174,11 @@ export default function SeatMap({
           const isSelected = selectedSeats.includes(seat._id);
           const isBooked = seat.status === "booked";
 
-          // অন্য কারো লক (সকেট বা ডিবি থেকে)
           const isLockedByOthers =
             (seat.status === "locked" && seat.lockedBy !== myUserId) ||
             (optimisticLockedSeats.includes(seat._id) && !isSelected);
 
-          const isActiveByUser = isSelected; // পিওর অপটিমিস্টিক UI
+          const isActiveByUser = isSelected;
           const isDisabled = isBooked || isLockedByOthers;
 
           return (
