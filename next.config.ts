@@ -14,22 +14,22 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "**", 
+        hostname: "**",
       },
     ],
   },
 
-    async rewrites() {
+  async rewrites() {
     const isDev = process.env.NODE_ENV === "development";
 
-    const backendUrl = isDev 
-      ? process.env.NEXT_PUBLIC_DEV_BACKEND_URL 
+    const backendUrl = isDev
+      ? process.env.NEXT_PUBLIC_DEV_BACKEND_URL
       : process.env.NEXT_PUBLIC_PROD_BACKEND_URL;
 
     return [
       {
         source: "/api/v1/:path*",
-        destination: `${backendUrl}/:path*`, 
+        destination: `${backendUrl}/:path*`,
       },
     ];
   },
